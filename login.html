@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Login - RQ Kamila</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=block" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { primary: "#006b5f", "primary-dark": "#005047", surface: "#f9f9ff" },
+                    fontFamily: { sans: ["Inter", "sans-serif"] }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gradient-to-br from-[#E1ECE9] to-[#BAD7DF] min-h-screen flex items-center justify-center p-4 font-sans text-gray-800">
+
+    <div class="bg-white p-8 md:p-10 rounded-3xl shadow-xl w-full max-w-md transform transition-all">
+        <div class="flex flex-col items-center mb-8">
+            <div class="w-20 h-20 bg-gray-50 rounded-xl p-2 shadow-sm mb-4 border border-gray-100">
+                <img alt="Logo" class="w-full h-full object-contain" src="logorqkamila.png" onerror="this.src='https://ui-avatars.com/api/?name=RQ&background=ffffff&color=006b5f'">
+            </div>
+            <h2 class="text-2xl font-bold text-primary">Selamat Datang</h2>
+            <p class="text-sm text-gray-500 mt-1">Silakan masuk ke akun Anda</p>
+        </div>
+
+        <form id="loginForm" class="space-y-5">
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-1">Username</label>
+                <div class="relative">
+                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">person</span>
+                    <input type="text" id="username" required class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all" placeholder="Masukkan username">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-1">Password</label>
+                <div class="relative">
+                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">lock</span>
+                    <input type="password" id="password" required class="w-full pl-10 pr-12 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all" placeholder="••••••••">
+                    <button type="button" onclick="togglePassword()" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-primary transition-colors">
+                        <span class="material-symbols-outlined" id="eyeIcon">visibility</span>
+                    </button>
+                </div>
+            </div>
+
+            <button type="submit" id="btnLogin" class="w-full bg-primary text-white font-bold rounded-xl py-3 mt-4 hover:bg-primary-dark shadow-md transition-all active:scale-[0.98] flex justify-center items-center gap-2">
+                <span>Masuk Aplikasi</span>
+                <span class="material-symbols-outlined">login</span>
+            </button>
+        </form>
+    </div>
+
+    <script src="login.js"></script>
+    <script>
+        function togglePassword() {
+            const passInput = document.getElementById('password');
+            const eyeIcon = document.getElementById('eyeIcon');
+            if (passInput.type === "password") {
+                passInput.type = "text";
+                eyeIcon.textContent = "visibility_off";
+            } else {
+                passInput.type = "password";
+                eyeIcon.textContent = "visibility";
+            }
+        }
+    </script>
+</body>
+</html>
