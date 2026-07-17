@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - RQ Kamila (Holy Grail)</title>
+    <title>Dashboard - RQ Kamila (Global Overview)</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,16 +11,18 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- LIBRARY DIAGRAM: Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <!-- INTERNAL CSS: INTI HOLY GRAIL LAYOUT (ANTI-GAGAL) -->
     <style>
         :root {
             --bg-body: #F4F6FB;
             --surface: #FFFFFF;
             --text-main: #1A1A2E;
             --text-muted: #7E7E9A;
-            --primary: #059669; /* Tema Hijau Elegan */
-            --sidebar-bg: #1E293B; /* Warna Gelap Premium */
+            --primary: #059669; 
+            --sidebar-bg: #1E293B; 
             --border: #E8E6F0;
         }
 
@@ -30,18 +32,17 @@
             background-color: var(--bg-body);
             color: var(--text-main);
             height: 100vh;
-            overflow: hidden; /* Mencegah scroll pada body */
+            overflow: hidden; 
         }
 
         /* =========================================
-           HOLY GRAIL GRID SYSTEM (INTI LAYOUT)
+           HOLY GRAIL GRID SYSTEM (DESKTOP)
            ========================================= */
         .holy-grail-layout {
             display: grid;
             height: 100vh;
             gap: 15px;
             padding: 15px;
-            /* Pembagian: Kiri 250px | Tengah (Sisa layar) | Kanan 300px */
             grid-template-columns: 250px 1fr 300px;
             grid-template-rows: 70px 1fr 40px;
             grid-template-areas:
@@ -50,109 +51,76 @@
                 "aside-left footer footer";
         }
 
-        /* Gaya Default untuk Setiap Area */
-        .region {
-            background: var(--surface);
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
-            overflow-y: auto;
-        }
+        .region { background: var(--surface); border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); overflow-y: auto; }
 
-        /* 1. HEADER */
-        .region--header {
-            grid-area: header;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 25px;
-        }
-
-        /* 2. SIDEBAR KIRI */
-        .region--aside-left {
-            grid-area: aside-left;
-            background: var(--sidebar-bg);
-            color: white;
-            display: flex;
-            flex-direction: column;
-            padding: 25px 20px;
-        }
-
-        /* 3. KONTEN UTAMA TENGAH */
-        .region--main {
-            grid-area: main;
-            padding: 25px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        /* 4. SIDEBAR KANAN */
-        .region--aside-right {
-            grid-area: aside-right;
-            padding: 25px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        /* 5. FOOTER */
-        .region--footer {
-            grid-area: footer;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 25px;
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            border-radius: 12px;
-        }
+        .region--header { grid-area: header; display: flex; justify-content: space-between; align-items: center; padding: 0 25px; }
+        .region--aside-left { grid-area: aside-left; background: var(--sidebar-bg); color: white; display: flex; flex-direction: column; padding: 25px 20px; }
+        .region--main { grid-area: main; padding: 25px; display: flex; flex-direction: column; gap: 20px; }
+        .region--aside-right { grid-area: aside-right; padding: 25px; display: flex; flex-direction: column; gap: 20px; }
+        .region--footer { grid-area: footer; display: flex; align-items: center; justify-content: space-between; padding: 0 25px; font-size: 0.8rem; color: var(--text-muted); border-radius: 12px; }
 
         /* =========================================
-           KOMPONEN UI DALAM REGION
+           KOMPONEN UI
            ========================================= */
-        /* Sidebar Menu */
         .brand-logo-area { display: flex; align-items: center; gap: 12px; margin-bottom: 40px; }
         .brand-logo-area img { width: 40px; height: 40px; background: white; padding: 4px; border-radius: 10px; }
         .nav-link { display: flex; align-items: center; gap: 12px; padding: 12px 15px; color: #94A3B8; text-decoration: none; border-radius: 10px; font-weight: 500; font-size: 0.9rem; transition: 0.3s; margin-bottom: 5px; }
         .nav-link:hover { background: rgba(255,255,255,0.05); color: white; }
         .nav-link.active { background: var(--primary); color: white; box-shadow: 0 4px 15px rgba(5, 150, 105, 0.4); }
 
-        /* Kartu Statistik */
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; }
-        .stat-card { padding: 20px; border-radius: 16px; border: 1px solid var(--border); display: flex; flex-direction: column; gap: 10px; }
-        .stat-card .val { font-size: 2rem; font-weight: 700; color: var(--text-main); line-height: 1; }
-        .stat-card .label { font-size: 0.75rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+        /* Diagram & Legend Container */
+        .chart-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 25px;
+        }
         
-        /* Tabel */
+        .chart-container-box { position: relative; width: 200px; height: 200px; flex-shrink: 0; }
+        .chart-center-text {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            text-align: center; pointer-events: none;
+        }
+        
+        .legend-grid { flex: 1; display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
+        .legend-card { padding: 15px; border-radius: 12px; background: var(--bg-body); display: flex; flex-direction: column; gap: 5px; }
+        .legend-card .val { font-size: 1.5rem; font-weight: 700; line-height: 1; }
+        .legend-card .label { font-size: 0.7rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+        
+        /* Tabel Log Global */
         .custom-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
         .custom-table th { background: var(--bg-body); padding: 12px 15px; text-align: left; color: var(--text-muted); font-weight: 600; border-radius: 8px 8px 0 0;}
         .custom-table td { padding: 15px; border-bottom: 1px solid var(--border); color: var(--text-main); font-weight: 500;}
 
-        /* Select / Input Kanan */
-        .form-select { width: 100%; padding: 12px 15px; background: var(--bg-body); border: 1px solid var(--border); border-radius: 10px; outline: none; cursor: pointer; font-family: inherit; font-weight: 600; color: var(--text-main); }
-
-        /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
 
-        /* Mode HP / Layar Kecil */
-        .mobile-toggle { display: none; background: none; border: none; font-size: 1.5rem; color: var(--text-main); cursor: pointer;}
+        .mobile-only-flex, .mobile-toggle { display: none; }
+
+        /* =========================================
+           MODE HP ANDROID (MOBILE)
+           ========================================= */
         @media (max-width: 1024px) {
+            .desktop-only { display: none !important; }
+            .mobile-toggle { display: block; background: none; border: none; font-size: 1.5rem; color: var(--text-main); cursor: pointer; }
+
             .holy-grail-layout {
                 grid-template-columns: 1fr;
                 grid-template-rows: 70px auto 1fr auto;
-                grid-template-areas:
-                    "header"
-                    "aside-right"
-                    "main"
-                    "footer";
-                overflow-y: auto; /* Izinkan scroll di HP */
+                grid-template-areas: "header" "aside-right" "main" "footer";
+                overflow-y: auto; 
             }
-            .mobile-toggle { display: block; }
-            .region--aside-left { position: fixed; left: -300px; top: 0; height: 100vh; z-index: 100; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-            .region--aside-left.active { left: 0; box-shadow: 10px 0 30px rgba(0,0,0,0.5); }
             body { overflow-y: auto; height: auto; }
+
+            .region--aside-left { position: fixed; left: -300px; top: 0; height: 100vh; z-index: 100; transition: 0.3s; }
+            .region--aside-left.active { left: 0; box-shadow: 10px 0 30px rgba(0,0,0,0.5); }
+            
+            .chart-wrapper { flex-direction: column; text-align: center; }
+            .chart-container-box { width: 180px; height: 180px; }
         }
     </style>
 </head>
@@ -160,9 +128,7 @@
 
     <div class="holy-grail-layout">
         
-        <!-- =========================================
-           1. SIDEBAR KIRI (ASIDE LEFT)
-           ========================================= -->
+        <!-- SIDEBAR KIRI -->
         <aside class="region region--aside-left" id="sidebar">
             <div class="brand-logo-area">
                 <img src="logorqkamila.png" alt="Logo RQ" onerror="this.src='https://ui-avatars.com/api/?name=RQ&background=ffffff&color=059669'">
@@ -182,57 +148,65 @@
             </div>
         </aside>
 
-        <!-- =========================================
-           2. HEADER (TOPBAR)
-           ========================================= -->
+        <!-- HEADER TOPBAR -->
         <header class="region region--header">
             <div style="display: flex; align-items: center; gap: 15px;">
-                <button class="mobile-toggle" onclick="document.getElementById('sidebar').classList.toggle('active')"><i class="fas fa-bars"></i></button>
-                <h2 style="font-size: 1.3rem; font-weight: 700;">Beranda Utama</h2>
+                <button class="mobile-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+                <h2 style="font-size: 1.2rem; font-weight: 700;">Dashboard Global</h2>
             </div>
             
-            <div style="display: flex; align-items: center; gap: 15px;">
-                <div style="text-align: right; display: none; sm:block;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="text-align: right;" class="desktop-only">
                     <p style="margin: 0; font-size: 0.9rem; font-weight: 700;" id="ustadzNameHeader">Memuat...</p>
                     <p style="margin: 0; font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase;">Pengajar Utama</p>
                 </div>
-                <div id="avatarHeader" style="width: 45px; height: 45px; border-radius: 50%; background: var(--bg-body); color: var(--primary); border: 2px solid var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.2rem;">U</div>
+                <div id="avatarHeader" style="width: 40px; height: 40px; border-radius: 50%; background: var(--bg-body); color: var(--primary); border: 2px solid var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.1rem;">U</div>
             </div>
         </header>
 
-        <!-- =========================================
-           3. KONTEN UTAMA (MAIN)
-           ========================================= -->
+        <!-- KONTEN UTAMA (DIAGRAM & LOG GLOBAL) -->
         <main class="region region--main">
             <div>
                 <h3 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 5px;" id="welcomeGreeting">Ahlan wa Sahlan!</h3>
-                <p style="font-size: 0.85rem; color: var(--text-muted);">Semoga hari ini penuh berkah. Berikut adalah ringkasan kelas Anda.</p>
+                <p style="font-size: 0.85rem; color: var(--text-muted);">Berikut adalah ringkasan absensi seluruh kelas Anda hari ini.</p>
             </div>
 
-            <!-- 4 Grid Statistik -->
-            <div class="stats-grid">
-                <div class="stat-card" style="border-left: 4px solid #3b82f6;">
-                    <span class="label">Total Santri</span>
-                    <span class="val" id="dashTotalSantri">0</span>
+            <!-- DIAGRAM DONAT & LEGEND -->
+            <div class="chart-wrapper">
+                
+                <div class="chart-container-box">
+                    <canvas id="attendanceChart"></canvas>
+                    <div class="chart-center-text">
+                        <p style="margin: 0; font-size: 0.65rem; font-weight: 700; color: var(--text-muted); letter-spacing: 1px;">TOTAL</p>
+                        <h3 style="margin: 0; font-size: 2rem; color: var(--text-main); font-weight: 700; line-height: 1.1;" id="centerTotalSantri">0</h3>
+                    </div>
                 </div>
-                <div class="stat-card" style="border-left: 4px solid var(--primary);">
-                    <span class="label">Hadir (H)</span>
-                    <span class="val" id="dashHadir" style="color: var(--primary);">0</span>
+
+                <div class="legend-grid">
+                    <div class="legend-card" style="border-left: 4px solid var(--primary);">
+                        <span class="label">Hadir (H)</span>
+                        <span class="val" id="legHadir" style="color: var(--primary);">0</span>
+                    </div>
+                    <div class="legend-card" style="border-left: 4px solid #f59e0b;">
+                        <span class="label">Izin/Sakit</span>
+                        <span class="val" id="legIzin" style="color: #f59e0b;">0</span>
+                    </div>
+                    <div class="legend-card" style="border-left: 4px solid #ef4444;">
+                        <span class="label">Alfa (A)</span>
+                        <span class="val" id="legAlfa" style="color: #ef4444;">0</span>
+                    </div>
+                    <div class="legend-card" style="border-left: 4px solid #cbd5e1;">
+                        <span class="label">Belum Diabsen</span>
+                        <span class="val" id="legBelum" style="color: #64748b;">0</span>
+                    </div>
                 </div>
-                <div class="stat-card" style="border-left: 4px solid #f59e0b;">
-                    <span class="label">Izin/Sakit</span>
-                    <span class="val" id="dashIzin" style="color: #f59e0b;">0</span>
-                </div>
-                <div class="stat-card" style="border-left: 4px solid #ef4444;">
-                    <span class="label">Alfa (A)</span>
-                    <span class="val" id="dashAlfa" style="color: #ef4444;">0</span>
-                </div>
+
             </div>
 
-            <!-- Tabel Log Aktivitas -->
+            <!-- Tabel Log Aktivitas GLOBAL -->
             <div style="flex: 1; display: flex; flex-direction: column;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                    <h4 style="font-size: 1rem; font-weight: 700;"><i class="fas fa-history" style="color: var(--primary); margin-right: 5px;"></i> Log Setoran Hari Ini</h4>
+                    <h4 style="font-size: 1rem; font-weight: 700;"><i class="fas fa-globe" style="color: var(--primary); margin-right: 5px;"></i> Log Aktivitas Semua Kelas Hari Ini</h4>
                 </div>
                 
                 <div style="overflow-x: auto;">
@@ -240,15 +214,15 @@
                         <thead>
                             <tr>
                                 <th>Nama Santri</th>
+                                <th>Asal Kelas</th>
                                 <th>Program</th>
-                                <th>Keterangan Materi</th>
                                 <th style="text-align: center;">Status</th>
                             </tr>
                         </thead>
                         <tbody id="recentActivityLogs">
                             <tr>
-                                <td colspan="4" style="text-align: center; padding: 40px; color: var(--text-muted); font-style: italic;">
-                                    Silakan pilih <strong>Kelas Monitor</strong> di panel sebelah kanan untuk melihat data absensi.
+                                <td colspan="4" style="text-align: center; padding: 40px; color: var(--primary); font-weight: 600;">
+                                    <i class="fas fa-spinner fa-spin"></i> Menarik data semua kelas...
                                 </td>
                             </tr>
                         </tbody>
@@ -257,139 +231,173 @@
             </div>
         </main>
 
-        <!-- =========================================
-           4. SIDEBAR KANAN (ASIDE RIGHT)
-           ========================================= -->
+        <!-- SIDEBAR KANAN / INFO AKADEMIK & DAFTAR KELAS -->
         <aside class="region region--aside-right">
             
-            <div style="background: var(--bg-body); padding: 15px; border-radius: 12px; border: 1px solid var(--border);">
-                <label style="display: block; font-size: 0.75rem; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase;">Pilih Kelas Monitor</label>
-                <select id="dashKelasSelect" class="form-select">
-                    <option value="">-- Memuat Data --</option>
-                </select>
+            <!-- Tanggal & Hari Efektif -->
+            <div style="background: var(--bg-body); padding: 18px; border-radius: 12px; border: 1px solid var(--border); text-align: center; margin-bottom: 10px;">
+                <p style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin: 0 0 5px 0;">Tanggal Sistem</p>
+                <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--text-main); margin: 0;" id="currentDateDisplay">Memuat...</h3>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; border: 1px solid var(--border); border-radius: 12px; margin-bottom: 10px;">
+                <div>
+                    <p style="font-size: 0.7rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; margin: 0;">Target KBM Bulan Ini</p>
+                    <p style="font-size: 1.1rem; font-weight: 700; margin: 0; color: var(--primary);" id="academicTargetDisplay">24 Hari</p>
+                </div>
+                <i class="fas fa-bullseye" style="font-size: 1.5rem; color: var(--border);"></i>
             </div>
 
             <hr style="border:0; border-top: 1px dashed var(--border); margin: 5px 0;">
 
-            <div>
-                <h4 style="font-size: 0.9rem; font-weight: 700; margin-bottom: 15px;"><i class="fas fa-info-circle" style="color: #3b82f6;"></i> Info Akademik</h4>
+            <!-- Daftar Kelas Binaan -->
+            <div style="flex: 1; display: flex; flex-direction: column; overflow-y: auto;">
+                <h4 style="font-size: 0.85rem; font-weight: 700; margin-bottom: 12px; color: var(--text-main);"><i class="fas fa-chalkboard-teacher" style="color: #3b82f6;"></i> Kelas Binaan Anda</h4>
                 
-                <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; border: 1px solid var(--border); border-radius: 12px; margin-bottom: 10px;">
-                    <div>
-                        <p style="font-size: 0.7rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; margin: 0;">Hari Efektif KBM</p>
-                        <p style="font-size: 1.1rem; font-weight: 700; margin: 0; color: var(--primary);" id="academicTargetDisplay">24 Hari</p>
-                    </div>
-                    <i class="fas fa-calendar-check" style="font-size: 1.5rem; color: var(--border);"></i>
-                </div>
-
-                <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; border: 1px solid var(--border); border-radius: 12px;">
-                    <div>
-                        <p style="font-size: 0.7rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; margin: 0;">Tanggal Hari Ini</p>
-                        <p style="font-size: 0.85rem; font-weight: 700; margin: 0; color: var(--text-main);" id="currentDateDisplay">Memuat...</p>
-                    </div>
+                <div id="listKelasBinaan" style="display: flex; flex-direction: column; gap: 10px;">
+                    <!-- Diisi oleh JS -->
+                    <p style="font-size: 0.8rem; color: var(--text-muted); font-style: italic;">Memuat kelas...</p>
                 </div>
             </div>
 
         </aside>
 
-        <!-- =========================================
-           5. FOOTER
-           ========================================= -->
         <footer class="region region--footer">
-            <div><i class="fas fa-shield-alt" style="color: var(--primary);"></i> Sistem Terhubung ke Supabase</div>
+            <div><i class="fas fa-shield-alt" style="color: var(--primary);"></i> Global Data Sync</div>
             <div>Holy Grail UI &copy; 2026</div>
         </footer>
 
     </div>
 
+    <!-- Overlay Latar Belakang Gelap untuk Sidebar Mobile -->
+    <div id="sidebarOverlay" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 99;" onclick="toggleSidebar()"></div>
+
     <!-- ENGINE JAVASCRIPT & SUPABASE -->
     <script>
+        // Logika Sidebar Mobile
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+            const overlay = document.getElementById('sidebarOverlay');
+            overlay.style.display = overlay.style.display === 'block' ? 'none' : 'block';
+        }
+
         document.addEventListener("DOMContentLoaded", async () => {
-            // 1. Validasi Akses
             const username = localStorage.getItem('ustadz_username');
             if (!username) { window.location.href = 'login.html'; return; }
 
-            // 2. Kredensial Supabase
             const SUPABASE_URL = 'https://ucsfssukcrkmguhizbbj.supabase.co';
             const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVjc2Zzc3VrY3JrbWd1aGl6YmJqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgzMjkxOTksImV4cCI6MjA5MzkwNTE5OX0.2rSwfgAhzyeSb_ru-6K9hDKSMtFbSK1vgiBpopqM9NY';
             const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-            // 3. Tampilkan Identitas
             const namaUstadz = localStorage.getItem('nama_ustadz') || 'Ustadz';
             document.getElementById('ustadzNameHeader').textContent = namaUstadz;
             document.getElementById('welcomeGreeting').textContent = `Ahlan wa Sahlan, ${namaUstadz}!`;
             document.getElementById('avatarHeader').textContent = namaUstadz.charAt(0).toUpperCase();
             
-            const options = { year: 'numeric', month: 'short', day: 'numeric' };
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
             document.getElementById('currentDateDisplay').textContent = new Date().toLocaleDateString('id-ID', options);
             
             const savedHariEfektif = localStorage.getItem('hari_efektif') || 24;
             document.getElementById('academicTargetDisplay').textContent = `${savedHariEfektif} Hari`;
 
-            // 4. Engine Data Kelas
-            const dashKelasSelect = document.getElementById('dashKelasSelect');
-            const logsTable = document.getElementById('recentActivityLogs');
-
-            const { data: listKelas } = await supabase.from('tabel_kelas').select('nama_kelas').eq('nama_ustadz', namaUstadz).order('nama_kelas');
-            if(listKelas && listKelas.length > 0) {
-                dashKelasSelect.innerHTML = '<option value="">-- Pilih Kelas Binaan --</option>' + listKelas.map(k => `<option value="${k.nama_kelas}">${k.nama_kelas}</option>`).join('');
-            } else {
-                dashKelasSelect.innerHTML = '<option value="">Belum ada kelas</option>';
-            }
-
-            dashKelasSelect.addEventListener('change', async (e) => {
-                const klsSelected = e.target.value;
-                if(!klsSelected) return;
-
-                logsTable.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 30px; font-weight:600;"><i class="fas fa-spinner fa-spin" style="color: var(--primary);"></i> Mengambil data real-time...</td></tr>';
-                const todayIso = new Date().toISOString().split('T')[0];
-
-                const { data: totalS } = await supabase.from('dapodik_santri').select('nis').eq('nama_kelas', klsSelected);
-                document.getElementById('dashTotalSantri').textContent = totalS ? totalS.length : 0;
-
-                const { data: harian } = await supabase.from('tabel_input_harian').select('*').eq('tanggal', todayIso).eq('nama_kelas', klsSelected);
-                
-                let hadir = 0, izinSakit = 0, alfa = 0;
-                if(harian) {
-                    harian.forEach(row => {
-                        if(row.status_hadir === 'H') hadir++;
-                        else if(row.status_hadir === 'I' || row.status_hadir === 'S') izinSakit++;
-                        else if(row.status_hadir === 'A') alfa++;
-                    });
-                }
-                document.getElementById('dashHadir').textContent = hadir;
-                document.getElementById('dashIzin').textContent = izinSakit;
-                document.getElementById('dashAlfa').textContent = alfa;
-
-                if(harian && harian.length > 0) {
-                    logsTable.innerHTML = harian.map(row => {
-                        let progBadge = '-', detailMateri = '-';
-                        if(row.tahsin_buku) {
-                            progBadge = `<span style="background:#e0f2fe; color:#2563eb; padding:4px 8px; border-radius:6px; font-size:0.7rem; font-weight:700;">Tahsin</span>`;
-                            detailMateri = row.tahsin_buku === 'AlQuran' ? `${row.tahsin_surat}` : `${row.tahsin_buku} Hal ${row.tahsin_halaman || '-'}`;
-                        } else if(row.tahfidz_surat) {
-                            progBadge = `<span style="background:#f3e8ff; color:#9333ea; padding:4px 8px; border-radius:6px; font-size:0.7rem; font-weight:700;">Tahfidz</span>`;
-                            detailMateri = `${row.tahfidz_surat}`;
-                        }
-                        
-                        let txtStatus = '<span style="color:var(--text-muted); font-weight:600;">Absen</span>';
-                        if(row.status_hadir === 'H') txtStatus = '<span style="color:var(--primary); font-weight:700;"><i class="fas fa-check"></i> Hadir</span>';
-                        else if(row.status_hadir === 'I' || row.status_hadir === 'S') txtStatus = '<span style="color:#f59e0b; font-weight:700;"><i class="fas fa-clock"></i> Izin</span>';
-                        else if(row.status_hadir === 'A') txtStatus = '<span style="color:#ef4444; font-weight:700;"><i class="fas fa-times"></i> Alfa</span>';
-
-                        return `
-                            <tr>
-                                <td style="font-weight:600;">${row.nama_santri}</td>
-                                <td>${progBadge}</td>
-                                <td style="color:var(--text-muted);">${detailMateri}</td>
-                                <td style="text-align:center;">${txtStatus}</td>
-                            </tr>
-                        `;
-                    }).join('');
-                } else {
-                    logsTable.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 30px; color: var(--text-muted); font-style: italic;">Belum ada input absensi/ngaji di kelas ini untuk hari ini.</td></tr>`;
+            // INISIALISASI DIAGRAM DONAT (Chart.js)
+            const ctx = document.getElementById('attendanceChart').getContext('2d');
+            const attendanceChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Hadir', 'Izin/Sakit', 'Alfa', 'Belum Diabsen'],
+                    datasets: [{
+                        data: [0, 0, 0, 1], // Data awal
+                        backgroundColor: ['#059669', '#f59e0b', '#ef4444', '#e2e8f0'],
+                        borderWidth: 0,
+                        cutout: '75%', // Ketebalan donat
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false }, tooltip: { enabled: true } }
                 }
             });
+
+            // 1. Tarik Semua Kelas yang Diajar oleh Ustadz Ini
+            const { data: listKelas } = await supabase.from('tabel_kelas').select('nama_kelas').eq('nama_ustadz', namaUstadz);
+            const kelasNames = listKelas ? listKelas.map(k => k.nama_kelas) : [];
+            
+            // Tampilkan Daftar Kelas di Aside Right
+            const listContainer = document.getElementById('listKelasBinaan');
+            if (kelasNames.length > 0) {
+                listContainer.innerHTML = kelasNames.map(k => `
+                    <div style="background: var(--bg-body); padding: 10px 15px; border-radius: 8px; font-size: 0.8rem; font-weight: 600; color: var(--text-main); display: flex; align-items: center; gap: 10px;">
+                        <div style="width: 8px; height: 8px; background: var(--primary); border-radius: 50%;"></div> ${k}
+                    </div>
+                `).join('');
+            } else {
+                listContainer.innerHTML = `<p style="font-size: 0.8rem; color: var(--text-muted);">Anda belum mengampu kelas apa pun.</p>`;
+                document.getElementById('recentActivityLogs').innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 30px; color: var(--text-muted); font-style: italic;">Tidak ada kelas untuk dimonitor.</td></tr>`;
+                return; // Stop eksekusi jika tidak ada kelas
+            }
+
+            // 2. Kalkulasi Total Seluruh Santri di Semua Kelas
+            const { data: allSantri } = await supabase.from('dapodik_santri').select('nis').in('nama_kelas', kelasNames);
+            const totalSantriGlobal = allSantri ? allSantri.length : 0;
+            document.getElementById('centerTotalSantri').textContent = totalSantriGlobal;
+
+            // 3. Tarik Log Harian Seluruh Kelas untuk Hari Ini
+            const todayIso = new Date().toISOString().split('T')[0];
+            const { data: harian } = await supabase.from('tabel_input_harian').select('*').eq('tanggal', todayIso).in('nama_kelas', kelasNames);
+            
+            let hadir = 0, izinSakit = 0, alfa = 0;
+            if(harian) {
+                harian.forEach(row => {
+                    if(row.status_hadir === 'H') hadir++;
+                    else if(row.status_hadir === 'I' || row.status_hadir === 'S') izinSakit++;
+                    else if(row.status_hadir === 'A') alfa++;
+                });
+            }
+
+            let belumDiabsen = totalSantriGlobal - (hadir + izinSakit + alfa);
+            if(belumDiabsen < 0) belumDiabsen = 0;
+
+            // Update Angka di Legend
+            document.getElementById('legHadir').textContent = hadir;
+            document.getElementById('legIzin').textContent = izinSakit;
+            document.getElementById('legAlfa').textContent = alfa;
+            document.getElementById('legBelum').textContent = belumDiabsen;
+
+            // Update Diagram Donat
+            attendanceChart.data.datasets[0].data = [hadir, izinSakit, alfa, belumDiabsen];
+            attendanceChart.update();
+
+            // 4. Render Tabel Log Global
+            const logsTable = document.getElementById('recentActivityLogs');
+            if(harian && harian.length > 0) {
+                // Urutkan dari yang terbaru (diasumsikan record terakhir di array)
+                const sortedHarian = harian.reverse(); 
+
+                logsTable.innerHTML = sortedHarian.map(row => {
+                    let progBadge = '-';
+                    if(row.tahsin_buku) progBadge = `<span style="background:#e0f2fe; color:#2563eb; padding:4px 8px; border-radius:6px; font-size:0.7rem; font-weight:700;">Tahsin</span>`;
+                    else if(row.tahfidz_surat) progBadge = `<span style="background:#f3e8ff; color:#9333ea; padding:4px 8px; border-radius:6px; font-size:0.7rem; font-weight:700;">Tahfidz</span>`;
+                    
+                    let txtStatus = '<span style="color:var(--text-muted); font-weight:600;">Absen</span>';
+                    if(row.status_hadir === 'H') txtStatus = '<span style="color:var(--primary); font-weight:700;">Hadir</span>';
+                    else if(row.status_hadir === 'I' || row.status_hadir === 'S') txtStatus = '<span style="color:#f59e0b; font-weight:700;">Izin/Skt</span>';
+                    else if(row.status_hadir === 'A') txtStatus = '<span style="color:#ef4444; font-weight:700;">Alfa</span>';
+
+                    return `
+                        <tr>
+                            <td style="font-weight:600;">${row.nama_santri}</td>
+                            <td style="font-size:0.75rem; color:var(--text-muted); font-weight:600;"><i class="fas fa-tag"></i> ${row.nama_kelas}</td>
+                            <td>${progBadge}</td>
+                            <td style="text-align:center;">${txtStatus}</td>
+                        </tr>
+                    `;
+                }).join('');
+            } else {
+                logsTable.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 40px; color: var(--text-muted); font-style: italic;">Belum ada satupun santri yang diabsen hari ini di semua kelas.</td></tr>`;
+            }
         });
 
         window.logoutApp = function() {
