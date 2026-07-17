@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Dashboard - RQ Kamila (Concentric UI)</title>
+    <title>Dashboard - RQ Kamila (Dark/Light Mobile)</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,6 +14,9 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
+        /* =========================================
+           TEMA TERANG (DEFAULT)
+           ========================================= */
         :root {
             --bg-body: #F4F6FB;
             --surface: #FFFFFF;
@@ -23,29 +26,50 @@
             --sidebar-bg: #1E293B; 
             --border: #E8E6F0;
             
-            /* Warna Cincin Neon */
-            --ring-hadir: #10B981; /* Hijau */
-            --ring-izin: #F59E0B;  /* Kuning/Oranye */
-            --ring-alfa: #EF4444;  /* Merah */
-            --ring-ulang: #8B5CF6; /* Ungu */
-            --ring-track: rgba(255, 255, 255, 0.08); /* Jalur cincin gelap */
+            /* Warna Cincin */
+            --ring-hadir: #10B981; 
+            --ring-izin: #F59E0B;  
+            --ring-alfa: #EF4444;  
+            --ring-ulang: #8B5CF6; 
+            --ring-track: #E2E8F0; /* Jalur cincin kosong */
+            
+            /* Warna Tooltip (Terang -> Tooltip Hitam) */
+            --tt-bg: rgba(0, 0, 0, 0.85);
+            --tt-text: #FFFFFF;
+            --tt-border: rgba(255,255,255,0.1);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        /* =========================================
+           TEMA GELAP (DARK MODE)
+           ========================================= */
+        [data-theme="dark"] {
+            --bg-body: #0B0B0F;
+            --surface: #141418;
+            --text-main: #ECEAF5;
+            --text-muted: #8A87A0;
+            --sidebar-bg: #0B0B0F;
+            --border: #1F1F28;
+            
+            --ring-track: rgba(255,255,255,0.08); /* Jalur cincin kosong gelap */
+            
+            /* Warna Tooltip (Gelap -> Tooltip Putih) */
+            --tt-bg: rgba(255, 255, 255, 0.95);
+            --tt-text: #1A1A2E;
+            --tt-border: rgba(0,0,0,0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; transition: background-color 0.3s ease, border-color 0.3s ease; }
 
         body { background-color: var(--bg-body); color: var(--text-main); height: 100vh; overflow: hidden; }
 
-        /* =========================================
-           MOBILE-FIRST GRID SYSTEM
-           ========================================= */
+        /* GRID SYSTEM MOBILE-FIRST */
         .holy-grail-layout {
             display: grid;
             height: 100vh;
             grid-template-columns: 1fr;
             grid-template-rows: 75px 1fr auto;
             grid-template-areas: "header" "main" "footer";
-            overflow-y: auto; 
-            overflow-x: hidden;
+            overflow-y: auto; overflow-x: hidden;
         }
 
         @media (min-width: 1025px) {
@@ -58,6 +82,7 @@
             .mobile-toggle { display: none !important; }
         }
 
+        /* REGIONS */
         .region--header {
             grid-area: header; background: var(--surface); display: flex; justify-content: space-between; align-items: center;
             padding: 0 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); z-index: 10;
@@ -67,16 +92,15 @@
             padding: 25px 20px; z-index: 100;
         }
         .region--main { grid-area: main; padding: 20px; display: flex; flex-direction: column; max-width: 100%; }
-        .region--footer { grid-area: footer; padding: 15px 20px; font-size: 0.75rem; color: var(--text-muted); display: flex; justify-content: space-between; }
+        .region--footer { grid-area: footer; padding: 15px 20px; font-size: 0.75rem; color: var(--text-muted); display: flex; justify-content: space-between; background: var(--surface); }
 
-        /* Sidebar Kiri */
+        /* NAVBAR KIRI */
         .brand-logo-area { display: flex; align-items: center; gap: 12px; margin-bottom: 40px; }
         .brand-logo-area img { width: 40px; height: 40px; background: white; padding: 4px; border-radius: 10px; }
         .nav-link { display: flex; align-items: center; gap: 12px; padding: 12px 15px; color: #94A3B8; text-decoration: none; border-radius: 10px; font-weight: 500; font-size: 0.9rem; transition: 0.3s; margin-bottom: 5px; }
         .nav-link:hover { background: rgba(255,255,255,0.05); color: white; }
         .nav-link.active { background: var(--primary); color: white; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4); }
 
-        /* Mode HP Sidebar Slide */
         @media (max-width: 1024px) {
             .region--aside-left { position: fixed; left: -300px; top: 0; height: 100vh; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
             .region--aside-left.active { left: 0; box-shadow: 10px 0 30px rgba(0,0,0,0.5); }
@@ -84,74 +108,55 @@
         }
         .mobile-toggle { background: none; border: none; font-size: 1.5rem; color: var(--text-main); cursor: pointer; }
 
-        /* =========================================
-           KOMPONEN DASHBOARD BARU
-           ========================================= */
+        /* SAKLAR TEMA & AVATAR */
+        .header-actions { display: flex; align-items: center; gap: 18px; }
+        .theme-btn { background: none; border: none; color: var(--text-main); font-size: 1.3rem; cursor: pointer; transition: 0.3s; }
+        .theme-btn:hover { color: var(--primary); }
+        .avatar-box { width: 40px; height: 40px; border-radius: 50%; background: var(--bg-body); color: var(--primary); border: 2px solid var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.1rem; box-shadow: 0 2px 5px rgba(16,185,129,0.2); }
+
+        /* KOMPONEN KONTEN UTAMA */
+        .greeting-area { margin-bottom: 20px; }
+        .greeting-area h3 { font-size: 1.6rem; font-weight: 700; color: var(--text-main); margin-bottom: 5px; }
+        .greeting-area p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; font-style: italic; }
+
         /* Filter Waktu */
-        .time-filters { display: flex; gap: 20px; margin-bottom: 15px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
-        .filter-btn { 
-            background: none; border: none; font-size: 0.9rem; font-weight: 600; color: var(--text-muted); 
-            cursor: pointer; position: relative; padding-bottom: 5px; transition: 0.3s;
-        }
+        .time-filters { display: flex; gap: 20px; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
+        .filter-btn { background: none; border: none; font-size: 0.9rem; font-weight: 600; color: var(--text-muted); cursor: pointer; position: relative; padding-bottom: 5px; transition: color 0.3s; }
         .filter-btn.active { color: var(--text-main); }
-        .filter-btn.active::after { 
-            content: ''; position: absolute; bottom: -11px; left: 0; width: 100%; height: 3px; 
-            background: var(--primary); border-radius: 3px; box-shadow: 0 -2px 10px rgba(16, 185, 129, 0.6);
-        }
+        .filter-btn.active::after { content: ''; position: absolute; bottom: -11px; left: 0; width: 100%; height: 3px; background: var(--primary); border-radius: 3px; box-shadow: 0 -2px 10px rgba(16, 185, 129, 0.6); }
 
-        /* Area Cincin Gelap Premium */
-        .chart-dark-card {
-            background: #111115; /* Warna gelap elegan */
-            border-radius: 24px;
-            padding: 25px;
-            margin-bottom: 25px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            position: relative;
-        }
-
-        .chart-container-box { position: relative; width: 220px; height: 220px; margin-bottom: 25px; cursor: pointer;}
-        .chart-center-text {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            text-align: center; pointer-events: none;
-        }
+        /* Diagram Cincin Card */
+        .chart-card { background: var(--surface); border-radius: 24px; padding: 25px; margin-bottom: 25px; display: flex; flex-direction: column; align-items: center; box-shadow: 0 5px 20px rgba(0,0,0,0.03); border: 1px solid var(--border); position: relative; }
+        .chart-container-box { position: relative; width: 220px; height: 220px; margin-bottom: 25px; cursor: pointer; }
+        .chart-center-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; pointer-events: none; }
         
-        /* Legenda di Bawah Cincin */
         .legend-grid { width: 100%; display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
         @media (max-width: 500px) { .legend-grid { grid-template-columns: repeat(2, 1fr); gap: 15px; } }
-        
-        .legend-item { display: flex; flex-direction: column; align-items: center; gap: 5px; text-align: center; }
+        .legend-item { display: flex; flex-direction: column; align-items: center; gap: 5px; text-align: center; cursor: pointer; }
         .legend-dot { width: 12px; height: 12px; border-radius: 50%; }
-        .legend-title { font-size: 0.65rem; color: #888; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
-        .legend-val { font-size: 1.2rem; color: #FFF; font-weight: 700; }
+        .legend-title { font-size: 0.65rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+        .legend-val { font-size: 1.2rem; color: var(--text-main); font-weight: 700; transition: color 0.3s ease; }
 
-        /* Custom Tooltip Daftar Nama */
+        /* Tooltip Kustom (Bisa Putih/Hitam) */
         #namesTooltip {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(5px);
-            border: 1px solid rgba(255,255,255,0.1); border-radius: 12px;
+            background: var(--tt-bg); backdrop-filter: blur(8px);
+            border: 1px solid var(--tt-border); border-radius: 12px;
             padding: 15px; width: 85%; max-width: 280px;
             z-index: 50; display: none; flex-direction: column; gap: 8px;
-            color: white; box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            color: var(--tt-text); box-shadow: 0 10px 40px rgba(0,0,0,0.2);
             animation: fadeIn 0.3s ease forwards;
         }
         @keyframes fadeIn { from { opacity: 0; transform: translate(-50%, -45%); } to { opacity: 1; transform: translate(-50%, -50%); } }
-        
-        .tooltip-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; margin-bottom: 5px; }
+        .tooltip-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--tt-border); padding-bottom: 8px; margin-bottom: 5px; }
         .tooltip-title { font-size: 0.8rem; font-weight: 700; display: flex; align-items: center; gap: 6px; }
-        .tooltip-close { background: none; border: none; color: #888; cursor: pointer; font-size: 1rem; }
-        .tooltip-list { font-size: 0.75rem; color: #DDD; line-height: 1.6; max-height: 120px; overflow-y: auto; }
+        .tooltip-close { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1.1rem; }
+        .tooltip-list { font-size: 0.75rem; color: var(--tt-text); line-height: 1.6; max-height: 120px; overflow-y: auto; opacity: 0.9; }
 
-        /* Tabel Log */
+        /* Tabel CSS */
         .custom-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
         .custom-table th { background: var(--bg-body); padding: 12px 15px; text-align: left; color: var(--text-muted); font-weight: 600; border-radius: 8px 8px 0 0;}
         .custom-table td { padding: 15px; border-bottom: 1px solid var(--border); color: var(--text-main); font-weight: 500;}
-
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
     </style>
 </head>
 <body>
@@ -178,28 +183,38 @@
             </div>
         </aside>
 
-        <!-- HEADER -->
+        <!-- HEADER TOPBAR -->
         <header class="region region--header">
             <div style="display: flex; align-items: center; gap: 15px;">
                 <button class="mobile-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
-                <h2 style="font-size: 1.2rem; font-weight: 700; color: var(--text-main);">Dashboard Global</h2>
+                <h2 style="font-size: 1.2rem; font-weight: 700; color: var(--text-main);">Beranda Global</h2>
             </div>
             
-            <div id="avatarHeader" style="width: 40px; height: 40px; border-radius: 50%; background: var(--surface); color: var(--primary); border: 2px solid var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.1rem; box-shadow: 0 2px 5px rgba(16,185,129,0.2);">U</div>
+            <div class="header-actions">
+                <!-- Saklar Tema -->
+                <button class="theme-btn" onclick="toggleTheme()" id="btnThemeToggle"><i class="fas fa-moon" id="themeIcon"></i></button>
+                <div class="avatar-box" id="avatarHeader">U</div>
+            </div>
         </header>
 
         <!-- KONTEN UTAMA -->
         <main class="region region--main">
             
-            <!-- Info Sistem Compact -->
+            <!-- 1. SAPAAN & MOTIVASI (PALING ATAS) -->
+            <div class="greeting-area">
+                <h3 id="welcomeGreeting">Ahlan wa Sahlan!</h3>
+                <p>"Setiap huruf Al-Qur'an yang Ustadz ajarkan adalah pahala jariyah yang mengalir tanpa henti. Semangat menebar manfaat!"</p>
+            </div>
+
+            <!-- 2. INFO SISTEM COMPACT (2 Kolom) -->
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 25px;">
-                <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 12px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.02);">
+                <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 12px; text-align: center;">
                     <p style="margin: 0 0 4px 0; font-size: 0.65rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Tanggal & Waktu</p>
                     <p style="margin: 0; font-size: 0.85rem; font-weight: 700; color: var(--text-main);" id="currentDateDisplay">Memuat...</p>
                     <p style="margin: 2px 0 0 0; font-size: 0.8rem; font-weight: 600; color: var(--primary);" id="realtimeClock">00:00:00</p>
                 </div>
                 
-                <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 12px; display: flex; flex-direction: column; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.02);">
+                <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 12px; display: flex; flex-direction: column; justify-content: center;">
                     <p style="margin: 0 0 4px 0; font-size: 0.65rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Target KBM</p>
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <p style="margin: 0; font-size: 1.2rem; font-weight: 700; color: var(--primary);" id="academicTargetDisplay">24 Hari</p>
@@ -208,22 +223,17 @@
                 </div>
             </div>
 
-            <!-- Sapaan -->
-            <div style="margin-bottom: 15px;">
-                <h3 style="font-size: 1.5rem; font-weight: 700; color: var(--text-main); margin-bottom: 2px;" id="welcomeGreeting">Ahlan wa Sahlan!</h3>
-            </div>
-
-            <!-- FILTER WAKTU (Week, Month, Year style) -->
+            <!-- 3. FILTER WAKTU (Glowing Style) -->
             <div class="time-filters">
                 <button class="filter-btn active" onclick="changeTimeFilter('hari', this)">Hari Ini</button>
                 <button class="filter-btn" onclick="changeTimeFilter('pekan', this)">Pekan Ini</button>
                 <button class="filter-btn" onclick="changeTimeFilter('bulan', this)">Bulan Ini</button>
             </div>
 
-            <!-- KARTU CINCIN GELAP PREMIUM -->
-            <div class="chart-dark-card">
+            <!-- 4. DIAGRAM CINCIN KONSENTRIS -->
+            <div class="chart-card">
                 
-                <!-- Tooltip Interaktif (Muncul saat di klik) -->
+                <!-- Tooltip Transparan Adaptif -->
                 <div id="namesTooltip">
                     <div class="tooltip-header">
                         <span class="tooltip-title" id="ttTitle"><div class="legend-dot" id="ttDot"></div> <span id="ttLabel">Hadir</span></span>
@@ -235,12 +245,12 @@
                 <div class="chart-container-box" onclick="showOverallTooltip()">
                     <canvas id="concentricChart"></canvas>
                     <div class="chart-center-text">
-                        <p style="margin: 0; font-size: 0.65rem; font-weight: 700; color: #888; letter-spacing: 2px;">TOTAL</p>
-                        <h3 style="margin: 0; font-size: 2.2rem; color: #FFF; font-weight: 700; line-height: 1.1;" id="centerTotalValue">0</h3>
+                        <p style="margin: 0; font-size: 0.65rem; font-weight: 700; color: var(--text-muted); letter-spacing: 2px;">TOTAL</p>
+                        <h3 style="margin: 0; font-size: 2.2rem; color: var(--text-main); font-weight: 700; line-height: 1.1;" id="centerTotalValue">0</h3>
                     </div>
                 </div>
 
-                <!-- Legenda Horizontal Bawah Cincin -->
+                <!-- Legenda Interaktif Bawah Cincin -->
                 <div class="legend-grid">
                     <div class="legend-item" onclick="openTooltipSpecific('Hadir', 'var(--ring-hadir)')">
                         <div class="legend-dot" style="background: var(--ring-hadir);"></div>
@@ -265,18 +275,18 @@
                 </div>
             </div>
 
-            <!-- TABEL LOG GLOBAL -->
+            <!-- 5. TABEL LOG GLOBAL -->
             <div style="flex: 1; display: flex; flex-direction: column;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                    <h4 style="font-size: 1rem; font-weight: 700;"><i class="fas fa-globe" style="color: var(--primary); margin-right: 5px;"></i> Log Aktivitas <span id="logTitleText">Hari Ini</span></h4>
+                    <h4 style="font-size: 1rem; font-weight: 700; color: var(--text-main);"><i class="fas fa-globe" style="color: var(--primary); margin-right: 5px;"></i> Log <span id="logTitleText">Hari Ini</span></h4>
                 </div>
                 
-                <div style="overflow-x: auto; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.02);">
+                <div style="overflow-x: auto; background: var(--surface); border: 1px solid var(--border); border-radius: 12px;">
                     <table class="custom-table">
                         <thead>
                             <tr>
                                 <th>Nama Santri</th>
-                                <th>Asal Kelas</th>
+                                <th>Kelas</th>
                                 <th>Program</th>
                                 <th style="text-align: center;">Status</th>
                             </tr>
@@ -284,7 +294,7 @@
                         <tbody id="recentActivityLogs">
                             <tr>
                                 <td colspan="4" style="text-align: center; padding: 40px; color: var(--primary); font-weight: 600;">
-                                    <i class="fas fa-spinner fa-spin"></i> Menarik data server...
+                                    <i class="fas fa-spinner fa-spin"></i> Menyiapkan data...
                                 </td>
                             </tr>
                         </tbody>
@@ -294,151 +304,159 @@
         </main>
 
         <footer class="region region--footer">
-            <div><i class="fas fa-shield-alt" style="color: var(--primary);"></i> Enkripsi End-to-End</div>
+            <div><i class="fas fa-shield-alt" style="color: var(--primary);"></i> Sistem Enkripsi Cloud</div>
             <div>RQ Kamila &copy; 2026</div>
         </footer>
 
     </div>
 
+    <!-- Background Gelap untuk menu slide -->
     <div id="sidebarOverlay" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 99;" onclick="toggleSidebar()"></div>
 
-    <!-- ENGINE JAVASCRIPT & SUPABASE -->
+    <!-- ENGINE JAVASCRIPT -->
     <script>
         let myChart;
         let globalSantriNames = { Hadir: [], Izin: [], Alfa: [], Ulang: [] };
         let currentTotalTarget = 0;
 
+        // FUNGSI TEMA (LIGHT/DARK MODE)
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            const icon = document.getElementById('themeIcon');
+            if (savedTheme === 'dark') {
+                document.body.setAttribute('data-theme', 'dark');
+                icon.className = 'fas fa-sun';
+            }
+        }
+        function toggleTheme() {
+            const isDark = document.body.getAttribute('data-theme') === 'dark';
+            const icon = document.getElementById('themeIcon');
+            if (isDark) {
+                document.body.removeAttribute('data-theme');
+                localStorage.setItem('theme', 'light');
+                icon.className = 'fas fa-moon';
+            } else {
+                document.body.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+                icon.className = 'fas fa-sun';
+            }
+            // Update warna trek diagram
+            if(myChart) {
+                const trackColor = !isDark ? 'rgba(255,255,255,0.08)' : '#E2E8F0';
+                myChart.data.datasets.forEach(ds => { ds.backgroundColor[1] = trackColor; });
+                myChart.update();
+            }
+        }
+        initTheme();
+
+        // UI SIDEBAR HP
         function toggleSidebar() {
             document.getElementById('sidebar').classList.toggle('active');
             const overlay = document.getElementById('sidebarOverlay');
             overlay.style.display = overlay.style.display === 'block' ? 'none' : 'block';
         }
 
-        // Jam Real-time
+        // JAM REAL-TIME
         function updateRealtimeClock() {
             const now = new Date();
-            const optionsDate = { year: 'numeric', month: 'short', day: 'numeric' };
+            const optionsDate = { year: 'numeric', month: 'long', day: 'numeric' };
             document.getElementById('currentDateDisplay').textContent = now.toLocaleDateString('id-ID', optionsDate);
             document.getElementById('realtimeClock').textContent = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) + " WIB";
         }
         setInterval(updateRealtimeClock, 1000);
         updateRealtimeClock(); 
 
-        // Inisialisasi Chart.js (Concentric Rings Trick)
+        // INIT CHART KONSENTRIS
         function initChart() {
             const ctx = document.getElementById('concentricChart').getContext('2d');
+            const trackColor = document.body.getAttribute('data-theme') === 'dark' ? 'rgba(255,255,255,0.08)' : '#E2E8F0';
             
-            // Konfigurasi 4 Dataset (4 Cincin Bertumpuk)
             const chartConfig = {
                 type: 'doughnut',
                 data: {
                     labels: ['Hadir', 'Izin', 'Alfa', 'Ulang'],
                     datasets: [
-                        { data: [0, 1], backgroundColor: ['#10B981', 'rgba(255,255,255,0.08)'], borderWidth: 0, borderRadius: 20 }, // Terluar
-                        { data: [0, 1], backgroundColor: ['#F59E0B', 'rgba(255,255,255,0.08)'], borderWidth: 0, borderRadius: 20 },
-                        { data: [0, 1], backgroundColor: ['#EF4444', 'rgba(255,255,255,0.08)'], borderWidth: 0, borderRadius: 20 },
-                        { data: [0, 1], backgroundColor: ['#8B5CF6', 'rgba(255,255,255,0.08)'], borderWidth: 0, borderRadius: 20 }  // Terdalam
+                        { data: [0, 1], backgroundColor: ['#10B981', trackColor], borderWidth: 0, borderRadius: 20 },
+                        { data: [0, 1], backgroundColor: ['#F59E0B', trackColor], borderWidth: 0, borderRadius: 20 },
+                        { data: [0, 1], backgroundColor: ['#EF4444', trackColor], borderWidth: 0, borderRadius: 20 },
+                        { data: [0, 1], backgroundColor: ['#8B5CF6', trackColor], borderWidth: 0, borderRadius: 20 } 
                     ]
                 },
                 options: {
-                    responsive: true, maintainAspectRatio: false,
-                    cutout: '60%', // Mengatur ketebalan cincin
-                    plugins: { legend: { display: false }, tooltip: { enabled: false } }, // Tooltip bawaan dimatikan
+                    responsive: true, maintainAspectRatio: false, cutout: '65%',
+                    plugins: { legend: { display: false }, tooltip: { enabled: false } }, 
                     animation: { animateScale: true, animateRotate: true }
                 }
             };
             myChart = new Chart(ctx, chartConfig);
         }
 
-        // Fungsi Filter Waktu
+        // FUNGSI TARIK DATA (FILTER WAKTU)
         async function changeTimeFilter(range, btnElement) {
-            // Ubah UI Tombol
             document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
             btnElement.classList.add('active');
-            
             let label = "Hari Ini";
             if(range === 'pekan') label = "Pekan Ini";
             if(range === 'bulan') label = "Bulan Ini";
             document.getElementById('logTitleText').textContent = label;
-
             await loadDashboardData(range);
         }
 
-        // Logic Tarik Data Database
         async function loadDashboardData(timeRange = 'hari') {
-            document.getElementById('recentActivityLogs').innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 40px; color: var(--primary); font-weight: 600;"><i class="fas fa-spinner fa-spin"></i> Menghitung ulang...</td></tr>`;
+            document.getElementById('recentActivityLogs').innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 40px; color: var(--primary); font-weight: 600;"><i class="fas fa-spinner fa-spin"></i> Menghitung rekapitulasi...</td></tr>`;
             
             const supabase = window.supabase;
             const namaUstadz = localStorage.getItem('nama_ustadz');
 
-            // Reset Data Memori Tooltip
             globalSantriNames = { Hadir: [], Izin: [], Alfa: [], Ulang: [] };
             let countH = 0, countI = 0, countA = 0, countU = 0;
 
-            // 1. Ambil Kelas
             const { data: listKelas } = await supabase.from('tabel_kelas').select('nama_kelas').eq('nama_ustadz', namaUstadz);
             const kelasNames = listKelas ? listKelas.map(k => k.nama_kelas) : [];
+            
             if (kelasNames.length === 0) {
-                document.getElementById('recentActivityLogs').innerHTML = `<tr><td colspan="4" style="text-align:center; padding:30px;">Tidak ada kelas binaan.</td></tr>`;
+                document.getElementById('recentActivityLogs').innerHTML = `<tr><td colspan="4" style="text-align:center; padding:30px;">Anda belum ditugaskan di kelas mana pun.</td></tr>`;
                 return; 
             }
 
-            // 2. Hitung Total Santri Global (Untuk Patokan Max Cincin)
             const { data: allSantri } = await supabase.from('dapodik_santri').select('nis').in('nama_kelas', kelasNames);
             const totalSantriGlobal = allSantri ? allSantri.length : 0;
             
-            // Pengganda Target berdasarkan waktu
             let multiplier = 1;
-            if(timeRange === 'pekan') multiplier = 7; // Asumsi 7 hari
+            if(timeRange === 'pekan') multiplier = 7; 
             if(timeRange === 'bulan') multiplier = parseInt(localStorage.getItem('hari_efektif') || 24);
             currentTotalTarget = totalSantriGlobal * multiplier;
 
             document.getElementById('centerTotalValue').textContent = currentTotalTarget;
 
-            // 3. Setup Range Tanggal
             const today = new Date();
             let startDate = new Date();
-            
-            if (timeRange === 'pekan') {
-                startDate.setDate(today.getDate() - 7);
-            } else if (timeRange === 'bulan') {
-                startDate = new Date(today.getFullYear(), today.getMonth(), 1);
-            }
+            if (timeRange === 'pekan') startDate.setDate(today.getDate() - 7);
+            else if (timeRange === 'bulan') startDate = new Date(today.getFullYear(), today.getMonth(), 1);
             
             const startStr = startDate.toISOString().split('T')[0];
             const endStr = today.toISOString().split('T')[0];
 
-            // 4. Query Data Harian
             let query = supabase.from('tabel_input_harian').select('*').in('nama_kelas', kelasNames);
-            
-            if (timeRange === 'hari') {
-                query = query.eq('tanggal', endStr);
-            } else {
-                query = query.gte('tanggal', startStr).lte('tanggal', endStr);
-            }
+            if (timeRange === 'hari') query = query.eq('tanggal', endStr);
+            else query = query.gte('tanggal', startStr).lte('tanggal', endStr);
 
             const { data: harian } = await query;
             
-            // 5. Klasifikasi Data & Inject ke Memori
             if(harian) {
                 harian.forEach(row => {
                     const nama = row.nama_santri;
-                    
                     if(row.status_hadir === 'H') { countH++; globalSantriNames.Hadir.push(nama); }
                     else if(row.status_hadir === 'I' || row.status_hadir === 'S') { countI++; globalSantriNames.Izin.push(nama); }
                     else if(row.status_hadir === 'A') { countA++; globalSantriNames.Alfa.push(nama); }
 
-                    // Deteksi Ulang Tahsin (Keterangan berisi kata 'ulang' atau nilai kurang)
                     if (row.keterangan_tahsin && row.keterangan_tahsin.toLowerCase().includes('ulang')) {
-                        countU++;
-                        globalSantriNames.Ulang.push(nama);
+                        countU++; globalSantriNames.Ulang.push(nama);
                     }
                 });
             }
 
-            // Unik-kan array (Bila direkap sepekan, 1 nama bisa muncul berkali-kali)
             for (let key in globalSantriNames) {
-                // Menghitung frekuensi nama jika lebih dari 1 hari
                 if (timeRange !== 'hari') {
                     let counts = {};
                     globalSantriNames[key].forEach(x => { counts[x] = (counts[x] || 0) + 1; });
@@ -448,33 +466,29 @@
                 }
             }
 
-            // 6. Update Angka Legenda
             document.getElementById('valHadir').textContent = countH;
             document.getElementById('valIzin').textContent = countI;
             document.getElementById('valAlfa').textContent = countA;
             document.getElementById('valUlang').textContent = countU;
 
-            // 7. Update Animasi Chart (Rumus Konsentris)
-            // Dataset: [Nilai Asli, Sisa Lingkaran]
             myChart.data.datasets[0].data = [countH, Math.max(0, currentTotalTarget - countH)];
             myChart.data.datasets[1].data = [countI, Math.max(0, currentTotalTarget - countI)];
             myChart.data.datasets[2].data = [countA, Math.max(0, currentTotalTarget - countA)];
             myChart.data.datasets[3].data = [countU, Math.max(0, currentTotalTarget - countU)];
             myChart.update();
 
-            // 8. Update Tabel
             const logsTable = document.getElementById('recentActivityLogs');
             if(harian && harian.length > 0) {
-                const sortedHarian = harian.reverse().slice(0, 50); // Maksimal tampil 50 log terakhir
+                const sortedHarian = harian.reverse().slice(0, 50); 
                 logsTable.innerHTML = sortedHarian.map(row => {
                     let progBadge = '-';
-                    if(row.tahsin_buku) progBadge = `<span style="background:#e0f2fe; color:#2563eb; padding:4px 8px; border-radius:6px; font-size:0.7rem; font-weight:700;">Tahsin</span>`;
-                    else if(row.tahfidz_surat) progBadge = `<span style="background:#f3e8ff; color:#9333ea; padding:4px 8px; border-radius:6px; font-size:0.7rem; font-weight:700;">Tahfidz</span>`;
+                    if(row.tahsin_buku) progBadge = `<span style="background:rgba(16,185,129,0.1); color:var(--primary); padding:4px 8px; border-radius:6px; font-size:0.7rem; font-weight:700;">Tahsin</span>`;
+                    else if(row.tahfidz_surat) progBadge = `<span style="background:rgba(139,92,246,0.1); color:#8B5CF6; padding:4px 8px; border-radius:6px; font-size:0.7rem; font-weight:700;">Tahfidz</span>`;
                     
                     let txtStatus = '<span style="color:var(--text-muted); font-weight:600;">Absen</span>';
                     if(row.status_hadir === 'H') txtStatus = '<span style="color:var(--primary); font-weight:700;">Hadir</span>';
-                    else if(row.status_hadir === 'I' || row.status_hadir === 'S') txtStatus = '<span style="color:#f59e0b; font-weight:700;">Izin</span>';
-                    else if(row.status_hadir === 'A') txtStatus = '<span style="color:#ef4444; font-weight:700;">Alfa</span>';
+                    else if(row.status_hadir === 'I' || row.status_hadir === 'S') txtStatus = '<span style="color:#F59E0B; font-weight:700;">Izin</span>';
+                    else if(row.status_hadir === 'A') txtStatus = '<span style="color:#EF4444; font-weight:700;">Alfa</span>';
 
                     return `
                         <tr>
@@ -486,19 +500,16 @@
                     `;
                 }).join('');
             } else {
-                logsTable.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 40px; color: var(--text-muted); font-style: italic;">Belum ada absensi yang masuk pada rentang waktu ini.</td></tr>`;
+                logsTable.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 40px; color: var(--text-muted); font-style: italic;">Belum ada absensi masuk.</td></tr>`;
             }
         }
 
-        // ==========================================
-        // SISTEM TOOLTIP INTERAKTIF (TOGLE HITAM)
-        // ==========================================
+        // TOOLTIP INTERAKTIF 
         function showOverallTooltip() {
-            // Jika diagram diklik tengahnya, tampilkan info umum
             const tt = document.getElementById('namesTooltip');
-            document.getElementById('ttLabel').textContent = "Info Global";
-            document.getElementById('ttDot').style.background = "#FFF";
-            document.getElementById('ttNames').innerHTML = `Ketuk <b>Legenda Warna</b> di bawah diagram untuk melihat daftar nama santri secara spesifik.`;
+            document.getElementById('ttLabel').textContent = "Info Cincin";
+            document.getElementById('ttDot').style.background = "var(--text-main)";
+            document.getElementById('ttNames').innerHTML = `Ketuk <b>Ikon Legenda Warna</b> di bawah diagram untuk melihat daftar nama santri secara detail.`;
             tt.style.display = 'flex';
         }
 
@@ -509,42 +520,36 @@
             
             const namesArray = globalSantriNames[category];
             let htmlList = "";
-            
-            if(namesArray.length === 0) {
-                htmlList = "<i>Tidak ada data di kategori ini.</i>";
-            } else {
-                // Tampilkan max 5 nama
+            if(namesArray.length === 0) { htmlList = "<i>Alhamdulillah, bersih.</i>"; } 
+            else {
                 const displayNames = namesArray.slice(0, 5);
                 displayNames.forEach(n => { htmlList += `• ${n}<br>`; });
-                
-                if(namesArray.length > 5) {
-                    htmlList += `<span style="color:#888; font-style:italic;">... dan ${namesArray.length - 5} lainnya</span>`;
-                }
+                if(namesArray.length > 5) htmlList += `<span style="opacity:0.7; font-style:italic;">... dan ${namesArray.length - 5} lainnya</span>`;
             }
             
             document.getElementById('ttNames').innerHTML = htmlList;
             tt.style.display = 'flex';
         }
+        function closeTooltip() { document.getElementById('namesTooltip').style.display = 'none'; }
 
-        function closeTooltip() {
-            document.getElementById('namesTooltip').style.display = 'none';
-        }
-
-        // Main Execution
+        // BOOTSTRAP
         document.addEventListener("DOMContentLoaded", async () => {
             const SUPABASE_URL = 'https://ucsfssukcrkmguhizbbj.supabase.co';
             const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVjc2Zzc3VrY3JrbWd1aGl6YmJqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgzMjkxOTksImV4cCI6MjA5MzkwNTE5OX0.2rSwfgAhzyeSb_ru-6K9hDKSMtFbSK1vgiBpopqM9NY';
             window.supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
             const namaUstadz = localStorage.getItem('nama_ustadz');
-            const namaPanggilan = namaUstadz ? namaUstadz.split(' ')[0] : 'Ustadz';
+            if(!namaUstadz) { window.location.href = 'login.html'; return; }
+            
+            const namaPanggilan = namaUstadz.split(' ')[0];
+            document.getElementById('welcomeGreeting').textContent = `Ahlan wa Sahlan, ${namaPanggilan}!`;
             document.getElementById('avatarHeader').textContent = namaPanggilan.charAt(0).toUpperCase();
             
             const savedHariEfektif = localStorage.getItem('hari_efektif') || 24;
             document.getElementById('academicTargetDisplay').textContent = `${savedHariEfektif} Hari`;
 
             initChart();
-            await loadDashboardData('hari'); // Load default Hari Ini
+            await loadDashboardData('hari'); 
         });
 
         window.logoutApp = function() {
