@@ -1,306 +1,410 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="utf-8">
-    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Data Santri - RQ Kamila</title>
     
-    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=block" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: { primary: "#10B981", surface: "#F4F6FB", textmain: "#1A1A2E", textmuted: "#7E7E9A" },
-                    fontFamily: { sans: ["Poppins", "sans-serif"] }
-                }
-            }
-        }
-    </script>
-
     <style>
-        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
-        body { background-color: #F4F6FB; color: #1A1A2E; overflow: hidden; }
-        
-        /* Layout Dasar */
+        /* =========================================
+           TEMA TERANG (DEFAULT)
+           ========================================= */
+        :root {
+            --bg-body: #F4F6FB;
+            --surface: #FFFFFF;
+            --text-main: #1A1A2E;
+            --text-muted: #7E7E9A;
+            --primary: #10B981; 
+            --sidebar-bg: #1E293B; 
+            --border: #E8E6F0;
+            --modal-bg: rgba(0,0,0,0.5);
+            --input-bg: #F8FAFC;
+        }
+
+        /* =========================================
+           TEMA GELAP (DARK MODE)
+           ========================================= */
+        [data-theme="dark"] {
+            --bg-body: #0B0B0F;
+            --surface: #141418;
+            --text-main: #ECEAF5;
+            --text-muted: #8A87A0;
+            --sidebar-bg: #0B0B0F;
+            --border: #1F1F28;
+            --modal-bg: rgba(0,0,0,0.8);
+            --input-bg: #1A1A22;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; transition: background-color 0.3s ease, border-color 0.3s ease; }
+
+        body { background-color: var(--bg-body); color: var(--text-main); height: 100vh; overflow: hidden; }
+
+        /* GRID SYSTEM MOBILE-FIRST */
         .holy-grail-layout {
             display: grid; height: 100vh;
-            grid-template-columns: 260px 1fr;
+            grid-template-columns: 1fr;
             grid-template-rows: 75px 1fr;
-            grid-template-areas: "aside-left header" "aside-left main";
+            grid-template-areas: "header" "main";
+            overflow-y: auto; overflow-x: hidden;
         }
-        
-        .region--header { grid-area: header; background: white; display: flex; justify-content: space-between; align-items: center; padding: 0 25px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); z-index: 10; }
-        .region--aside-left { grid-area: aside-left; background: #1E293B; display: flex; flex-direction: column; padding: 25px 20px; z-index: 50; }
-        .region--main { grid-area: main; padding: 25px; overflow-y: auto; }
 
+        @media (min-width: 1025px) {
+            .holy-grail-layout {
+                grid-template-columns: 260px 1fr;
+                grid-template-areas: "aside-left header" "aside-left main";
+                overflow: hidden;
+            }
+            .region--main { overflow-y: auto; }
+            .mobile-toggle { display: none !important; }
+        }
+
+        /* REGIONS */
+        .region--header { grid-area: header; background: var(--surface); display: flex; justify-content: space-between; align-items: center; padding: 0 20px; border-bottom: 1px solid var(--border); z-index: 10; }
+        .region--aside-left { grid-area: aside-left; background: var(--sidebar-bg); color: white; display: flex; flex-direction: column; padding: 25px 20px; z-index: 100; }
+        .region--main { grid-area: main; padding: 20px; display: flex; flex-direction: column; max-width: 100%; }
+
+        /* NAVBAR KIRI */
+        .brand-logo-area { display: flex; align-items: center; gap: 12px; margin-bottom: 40px; }
+        .brand-logo-area img { width: 40px; height: 40px; background: white; padding: 4px; border-radius: 10px; }
         .nav-link { display: flex; align-items: center; gap: 12px; padding: 12px 15px; color: #94A3B8; text-decoration: none; border-radius: 10px; font-weight: 500; font-size: 0.9rem; transition: 0.3s; margin-bottom: 5px; }
         .nav-link:hover { background: rgba(255,255,255,0.05); color: white; }
-        .nav-link.active { background: #10B981; color: white; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4); }
+        .nav-link.active { background: var(--primary); color: white; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4); }
 
-        /* Modal / Pop-up Styling (Responsif Presisi) */
-        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 100; align-items: center; justify-content: center; padding: 15px; }
-        .modal-overlay.active { display: flex; }
-        .modal-box { background: white; border-radius: 20px; width: 100%; max-width: 450px; padding: 25px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); position: relative; }
+        @media (max-width: 1024px) {
+            .region--aside-left { position: fixed; left: -300px; top: 0; height: 100vh; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+            .region--aside-left.active { left: 0; box-shadow: 10px 0 30px rgba(0,0,0,0.5); }
+        }
+        .mobile-toggle { background: none; border: none; font-size: 1.5rem; color: var(--text-main); cursor: pointer; }
+
+        /* SAKLAR TEMA & AVATAR */
+        .header-actions { display: flex; align-items: center; gap: 18px; }
+        .theme-btn { background: none; border: none; color: var(--text-main); font-size: 1.3rem; cursor: pointer; transition: 0.3s; }
+        .theme-btn:hover { color: var(--primary); }
+        .avatar-box { width: 40px; height: 40px; border-radius: 50%; background: var(--bg-body); color: var(--primary); border: 2px solid var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.1rem; }
+
+        /* =========================================
+           KOMPONEN DATA SANTRI (PURE CSS)
+           ========================================= */
+        .action-bar { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 20px; margin-bottom: 20px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 15px; }
+        .filter-group { flex: 1; min-width: 200px; display: flex; flex-direction: column; gap: 8px; }
+        .btn-group { display: flex; gap: 10px; flex-wrap: wrap; }
         
-        /* Custom Input Presisi */
-        .input-presisi { width: 100%; box-sizing: border-box; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 10px; padding: 10px 15px; font-size: 0.9rem; outline: none; transition: 0.3s; }
-        .input-presisi:focus { border-color: #10B981; box-shadow: 0 0 0 3px rgba(16,185,129,0.1); }
+        .input-box { width: 100%; padding: 12px 15px; background: var(--input-bg); border: 1px solid var(--border); color: var(--text-main); border-radius: 10px; outline: none; font-family: inherit; transition: 0.3s; }
+        .input-box:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(16,185,129,0.1); }
+        
+        .btn-primary { background: var(--primary); color: white; padding: 12px 20px; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.3s; box-shadow: 0 4px 10px rgba(16,185,129,0.3); }
+        .btn-primary:hover { background: #059669; }
+        .btn-outline { background: transparent; color: var(--primary); border: 1px solid var(--primary); padding: 12px 20px; border-radius: 10px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.3s; }
+        .btn-outline:hover { background: rgba(16,185,129,0.1); }
+
+        /* TABEL */
+        .table-container { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; overflow-x: auto; }
+        .custom-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; text-align: left; }
+        .custom-table th { background: var(--bg-body); padding: 15px; color: var(--text-muted); font-weight: 600; border-bottom: 2px solid var(--border); white-space: nowrap; }
+        .custom-table td { padding: 15px; border-bottom: 1px solid var(--border); color: var(--text-main); white-space: nowrap; }
+        .custom-table tr:hover { background: var(--bg-body); }
+        .badge-kelas { background: rgba(16,185,129,0.1); color: var(--primary); padding: 4px 10px; border-radius: 6px; font-weight: 700; font-size: 0.75rem; }
+        
+        /* MODAL POP-UP PRESISI */
+        .modal-overlay { position: fixed; inset: 0; background: var(--modal-bg); backdrop-filter: blur(4px); z-index: 9999; display: none; align-items: center; justify-content: center; padding: 20px; }
+        .modal-overlay.active { display: flex; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        .modal-card { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; width: 100%; max-width: 450px; padding: 25px; position: relative; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
+        .modal-close { position: absolute; top: 20px; right: 20px; background: none; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer; }
+        .modal-title { font-size: 1.2rem; font-weight: 700; color: var(--text-main); margin-bottom: 5px; border-bottom: 1px solid var(--border); padding-bottom: 15px; }
+        
+        .form-group { margin-top: 15px; }
+        .form-label { display: block; font-size: 0.75rem; font-weight: 600; color: var(--text-muted); margin-bottom: 5px; text-transform: uppercase; }
+        
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+
+        /* Search List Box */
+        .search-result-box { background: var(--input-bg); border: 1px solid var(--border); border-radius: 12px; margin-top: 10px; height: 220px; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 8px; }
+        .santri-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px; display: flex; justify-content: space-between; align-items: center; }
+        .santri-name { font-size: 0.85rem; font-weight: 700; color: var(--text-main); }
+        .santri-nis { font-size: 0.7rem; color: var(--text-muted); font-family: monospace; }
+        .btn-add-mini { background: rgba(16,185,129,0.1); color: var(--primary); border: none; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; transition: 0.3s; }
+        .btn-add-mini:hover { background: var(--primary); color: white; }
 
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-
-        @media (max-width: 1024px) {
-            .holy-grail-layout { grid-template-columns: 1fr; grid-template-areas: "header" "main"; }
-            .region--aside-left { position: fixed; left: -300px; height: 100vh; transition: 0.3s; }
-            .region--aside-left.active { left: 0; box-shadow: 10px 0 30px rgba(0,0,0,0.5); }
-        }
     </style>
 </head>
-<body class="font-sans antialiased">
+<body>
 
     <div class="holy-grail-layout">
-
-        <!-- SIDEBAR -->
+        
+        <!-- SIDEBAR KIRI -->
         <aside class="region region--aside-left" id="sidebar">
-            <div class="flex items-center gap-3 mb-10">
-                <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center p-1">
-                    <img src="logorqkamila.png" alt="RQ" onerror="this.src='https://ui-avatars.com/api/?name=RQ&background=ffffff&color=10B981'" class="w-full h-full object-contain">
-                </div>
-                <h1 class="text-lg font-bold text-white tracking-wide">RQ Kamila</h1>
+            <div class="brand-logo-area">
+                <img src="logorqkamila.png" alt="Logo" onerror="this.src='https://ui-avatars.com/api/?name=RQ&background=ffffff&color=10B981'">
+                <h1 style="font-size: 1.2rem; font-weight: 700; margin: 0; letter-spacing: 0.5px;">RQ Kamila</h1>
             </div>
-            <nav class="flex-1">
-                <a href="dashboard.html" class="nav-link"><i class="fas fa-border-all w-5"></i> Dashboard</a>
-                <a href="data-santri.html" class="nav-link active"><i class="fas fa-user-graduate w-5"></i> Data Santri</a>
-                <a href="input-harian.html" class="nav-link"><i class="fas fa-clipboard-list w-5"></i> Input Harian</a>
-                <a href="laporan.html" class="nav-link"><i class="fas fa-chart-pie w-5"></i> Laporan</a>
-                <a href="pengaturan.html" class="nav-link"><i class="fas fa-cog w-5"></i> Pengaturan</a>
+            
+            <nav style="flex: 1;">
+                <a href="dashboard.html" class="nav-link"><i class="fas fa-border-all w-[20px]"></i> Dashboard</a>
+                <a href="data-santri.html" class="nav-link active"><i class="fas fa-user-graduate w-[20px]"></i> Data Santri</a>
+                <a href="input-harian.html" class="nav-link"><i class="fas fa-clipboard-list w-[20px]"></i> Input Harian</a>
+                <a href="laporan.html" class="nav-link"><i class="fas fa-chart-pie w-[20px]"></i> Laporan</a>
+                <a href="pengaturan.html" class="nav-link"><i class="fas fa-cog w-[20px]"></i> Pengaturan</a>
             </nav>
-            <div class="mt-auto pt-5 border-t border-white/10">
-                <a href="javascript:void(0);" onclick="logoutApp()" class="nav-link !text-red-400 hover:!text-red-300"><i class="fas fa-sign-out-alt w-5"></i> Keluar Sesi</a>
+            
+            <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; margin-top: auto;">
+                <a href="javascript:void(0);" onclick="logoutApp()" class="nav-link" style="color: #ef4444;"><i class="fas fa-sign-out-alt"></i> Keluar Sesi</a>
             </div>
         </aside>
 
-        <!-- HEADER -->
+        <!-- HEADER TOPBAR -->
         <header class="region region--header">
-            <div class="flex items-center gap-4">
-                <button onclick="toggleSidebar()" class="lg:hidden text-gray-700 text-xl"><i class="fas fa-bars"></i></button>
-                <h2 class="text-lg font-bold text-gray-800">Manajemen Santri</h2>
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <button class="mobile-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+                <h2 style="font-size: 1.2rem; font-weight: 700; color: var(--text-main);">Data Santri</h2>
             </div>
-            <div id="avatarHeader" class="w-10 h-10 rounded-full bg-white text-primary border-2 border-primary flex items-center justify-center font-bold shadow-sm">U</div>
+            
+            <div class="header-actions">
+                <button class="theme-btn" onclick="toggleTheme()" id="btnThemeToggle"><i class="fas fa-moon" id="themeIcon"></i></button>
+                <div class="avatar-box" id="avatarHeader">U</div>
+            </div>
         </header>
 
         <!-- KONTEN UTAMA -->
         <main class="region region--main">
-            <div class="max-w-5xl mx-auto space-y-6">
-                
-                <!-- Action Bar -->
-                <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
-                    <div class="w-full md:w-1/2">
-                        <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Filter Berdasarkan Kelas:</label>
-                        <select id="filterKelasTable" class="input-presisi cursor-pointer !font-semibold">
-                            <option value="semua">Semua Kelas Binaan</option>
-                        </select>
-                    </div>
-                    <div class="w-full md:w-auto flex flex-col sm:flex-row gap-3">
-                        <button onclick="openModal('modalBuatKelas')" class="px-5 py-2.5 bg-primary/10 text-primary rounded-xl font-bold text-sm hover:bg-primary/20 transition-colors flex items-center justify-center gap-2">
-                            <i class="fas fa-plus"></i> Kelas Baru
-                        </button>
-                        <button onclick="openModalTarikSantri()" class="px-5 py-2.5 bg-primary text-white rounded-xl font-bold text-sm shadow-md shadow-primary/30 hover:bg-primary/90 transition-colors flex items-center justify-center gap-2">
-                            <i class="fas fa-download"></i> Tarik Santri
-                        </button>
-                    </div>
+            
+            <!-- Action Bar -->
+            <div class="action-bar">
+                <div class="filter-group">
+                    <span class="form-label">Filter Kelas Binaan</span>
+                    <select id="filterKelasTable" class="input-box" style="font-weight: 600; cursor: pointer;">
+                        <option value="semua">Semua Kelas Binaan</option>
+                    </select>
                 </div>
-
-                <!-- Tabel Santri -->
-                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse text-sm whitespace-nowrap">
-                            <thead>
-                                <tr class="bg-gray-50 text-gray-500 font-bold border-b border-gray-100">
-                                    <th class="p-4">NIS</th>
-                                    <th class="p-4">Nama Santri</th>
-                                    <th class="p-4">Kelas</th>
-                                    <th class="p-4 text-center">L/P</th>
-                                    <th class="p-4 text-center">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody id="santriTableBody" class="divide-y divide-gray-100">
-                                <tr>
-                                    <td colspan="5" class="text-center p-8 text-primary font-semibold">
-                                        <i class="fas fa-spinner fa-spin mr-2"></i> Memuat data server...
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                <div class="btn-group">
+                    <button class="btn-outline" onclick="openModal('modalBuatKelas')">
+                        <i class="fas fa-plus"></i> Kelas Baru
+                    </button>
+                    <button class="btn-primary" onclick="openModalTarikSantri()">
+                        <i class="fas fa-download"></i> Tarik Santri
+                    </button>
                 </div>
-
             </div>
+
+            <!-- Tabel Data -->
+            <div class="table-container">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th>NIS</th>
+                            <th>Nama Santri</th>
+                            <th>Kelas</th>
+                            <th style="text-align: center;">L/P</th>
+                            <th style="text-align: center;">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="santriTableBody">
+                        <tr>
+                            <td colspan="5" style="text-align: center; padding: 40px; color: var(--primary); font-weight: 600;">
+                                <i class="fas fa-spinner fa-spin"></i> Menghubungkan ke Database...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
         </main>
     </div>
 
     <!-- MODAL 1: BUAT KELAS BARU -->
-    <div id="modalBuatKelas" class="modal-overlay">
-        <div class="modal-box">
-            <button onclick="closeModal('modalBuatKelas')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600"><i class="fas fa-times text-xl"></i></button>
-            <h3 class="text-lg font-bold text-gray-800 mb-5 border-b pb-3"><i class="fas fa-plus-square text-primary mr-2"></i> Buat Kelas Baru</h3>
+    <div class="modal-overlay" id="modalBuatKelas">
+        <div class="modal-card">
+            <button class="modal-close" onclick="closeModal('modalBuatKelas')"><i class="fas fa-times"></i></button>
+            <h3 class="modal-title"><i class="fas fa-chalkboard-teacher" style="color: var(--primary);"></i> Buat Kelas Baru</h3>
             
-            <form id="formBuatKelas" class="space-y-4">
-                <div>
-                    <label class="block text-xs font-semibold text-gray-500 mb-1">Nama Kelas</label>
-                    <input type="text" id="inputNamaKelas" placeholder="Contoh: Abu Bakar" required class="input-presisi">
+            <form id="formBuatKelas">
+                <div class="form-group">
+                    <label class="form-label">Nama Kelas</label>
+                    <input type="text" id="inputNamaKelas" class="input-box" placeholder="Contoh: Abu Bakar" required autocomplete="off">
                 </div>
-                <!-- Solusi Grid yang Presisi -->
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="w-full overflow-hidden">
-                        <label class="block text-xs font-semibold text-gray-500 mb-1">Jam Mulai</label>
-                        <input type="time" id="inputJamMulai" required class="input-presisi">
+                <!-- Pengaturan Presisi Grid Waktu -->
+                <div class="grid-2 form-group">
+                    <div>
+                        <label class="form-label">Jam Mulai</label>
+                        <input type="time" id="inputJamMulai" class="input-box" required>
                     </div>
-                    <div class="w-full overflow-hidden">
-                        <label class="block text-xs font-semibold text-gray-500 mb-1">Jam Selesai</label>
-                        <input type="time" id="inputJamSelesai" required class="input-presisi">
+                    <div>
+                        <label class="form-label">Jam Selesai</label>
+                        <input type="time" id="inputJamSelesai" class="input-box" required>
                     </div>
                 </div>
-                <button type="submit" id="btnSimpanKelas" class="w-full mt-4 py-3 bg-primary text-white rounded-xl font-bold text-sm hover:bg-primary/90 transition-colors shadow-lg shadow-primary/30">
+                <button type="submit" class="btn-primary" id="btnSimpanKelas" style="width: 100%; justify-content: center; margin-top: 25px;">
                     Simpan Kelas Baru
                 </button>
             </form>
         </div>
     </div>
 
-    <!-- MODAL 2: TARIK SANTRI -->
-    <div id="modalTarikSantri" class="modal-overlay">
-        <div class="modal-box" style="max-width: 500px;">
-            <button onclick="closeModal('modalTarikSantri')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600"><i class="fas fa-times text-xl"></i></button>
-            <h3 class="text-lg font-bold text-gray-800 mb-2"><i class="fas fa-download text-primary mr-2"></i> Tarik Santri ke Kelas</h3>
-            <p class="text-xs text-gray-500 mb-5">Cari santri dari database Dapodik Pusat dan masukkan ke kelas Anda.</p>
+    <!-- MODAL 2: TARIK SANTRI DARI DAPODIK -->
+    <div class="modal-overlay" id="modalTarikSantri">
+        <div class="modal-card" style="max-width: 500px;">
+            <button class="modal-close" onclick="closeModal('modalTarikSantri')"><i class="fas fa-times"></i></button>
+            <h3 class="modal-title"><i class="fas fa-users" style="color: var(--primary);"></i> Tarik Santri Binaan</h3>
+            <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 15px;">Cari santri dari Dapodik Pusat dan daftarkan ke kelas Anda.</p>
             
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-xs font-semibold text-gray-500 mb-1">Pilih Kelas Tujuan:</label>
-                    <select id="selectKelasTarget" class="input-presisi cursor-pointer">
-                        <option value="">-- Pilih Kelas --</option>
-                    </select>
-                </div>
-                <div class="relative">
-                    <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                    <input type="text" id="searchDapodik" placeholder="Cari nama santri..." class="input-presisi pl-10" autocomplete="off">
-                </div>
-                
-                <!-- Hasil Pencarian -->
-                <div id="dapodikListContainer" class="bg-gray-50 border border-gray-200 rounded-xl p-2 h-48 overflow-y-auto space-y-2">
-                    <div class="text-center p-4 text-xs text-gray-400 mt-10">Ketik nama untuk mencari...</div>
-                </div>
+            <div class="form-group">
+                <label class="form-label">Tujuan Kelas:</label>
+                <select id="selectKelasTarget" class="input-box" style="font-weight: 600; cursor: pointer;">
+                    <option value="">-- Pilih Kelas --</option>
+                </select>
+            </div>
+            
+            <div class="form-group" style="position: relative;">
+                <i class="fas fa-search" style="position: absolute; left: 15px; top: 40px; color: var(--text-muted);"></i>
+                <label class="form-label">Cari Nama Santri:</label>
+                <input type="text" id="searchDapodik" class="input-box" placeholder="Ketik nama..." style="padding-left: 40px;" autocomplete="off">
+            </div>
+
+            <!-- List Hasil Pencarian -->
+            <div class="search-result-box" id="dapodikListContainer">
+                <div style="text-align: center; padding: 40px; font-size: 0.8rem; color: var(--text-muted);">Ketik nama untuk mencari santri...</div>
             </div>
         </div>
     </div>
 
-    <!-- Overlay Gelap Sidebar Mobile -->
-    <div id="sidebarOverlay" class="fixed inset-0 bg-black/50 z-40 hidden" onclick="toggleSidebar()"></div>
+    <!-- Background Gelap untuk menu slide -->
+    <div id="sidebarOverlay" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 99;" onclick="toggleSidebar()"></div>
 
-    <!-- LOGIKA JAVASCRIPT & SUPABASE -->
+    <!-- ENGINE JAVASCRIPT & SUPABASE -->
     <script>
-        // Init Supabase
-        const SUPABASE_URL = 'https://ucsfssukcrkmguhizbbj.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVjc2Zzc3VrY3JrbWd1aGl6YmJqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgzMjkxOTksImV4cCI6MjA5MzkwNTE5OX0.2rSwfgAhzyeSb_ru-6K9hDKSMtFbSK1vgiBpopqM9NY';
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        // ==========================================
+        // UI & THEME LOGIC
+        // ==========================================
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            const icon = document.getElementById('themeIcon');
+            if (savedTheme === 'dark') {
+                document.body.setAttribute('data-theme', 'dark');
+                icon.className = 'fas fa-sun';
+            }
+        }
+        function toggleTheme() {
+            const isDark = document.body.getAttribute('data-theme') === 'dark';
+            const icon = document.getElementById('themeIcon');
+            if (isDark) {
+                document.body.removeAttribute('data-theme');
+                localStorage.setItem('theme', 'light');
+                icon.className = 'fas fa-moon';
+            } else {
+                document.body.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+                icon.className = 'fas fa-sun';
+            }
+        }
+        initTheme();
 
-        const namaUstadz = localStorage.getItem('nama_ustadz');
-        let kelasBinaanList = []; // Simpan daftar kelas di memori
-
-        // UI Handlers
         function toggleSidebar() {
             document.getElementById('sidebar').classList.toggle('active');
             const overlay = document.getElementById('sidebarOverlay');
-            overlay.classList.toggle('hidden');
-        }
-        function openModal(id) { document.getElementById(id).classList.add('active'); }
-        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
-        
-        async function openModalTarikSantri() {
-            // Update dropdown di modal tarik santri agar sinkron dengan kelas yang baru dibuat
-            const selectTarget = document.getElementById('selectKelasTarget');
-            selectTarget.innerHTML = '<option value="">-- Pilih Kelas --</option>' + 
-                kelasBinaanList.map(k => `<option value="${k}">${k}</option>`).join('');
-            
-            document.getElementById('searchDapodik').value = '';
-            document.getElementById('dapodikListContainer').innerHTML = '<div class="text-center p-4 text-xs text-gray-400 mt-10">Ketik nama untuk mencari...</div>';
-            openModal('modalTarikSantri');
+            overlay.style.display = overlay.style.display === 'block' ? 'none' : 'block';
         }
 
-        // 1. Muat Data Awal
+        // Modal Handler Pure CSS
+        function openModal(id) { document.getElementById(id).classList.add('active'); }
+        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+
+        // ==========================================
+        // DATABASE SUPABASE LOGIC
+        // ==========================================
+        const SUPABASE_URL = 'https://ucsfssukcrkmguhizbbj.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVjc2Zzc3VrY3JrbWd1aGl6YmJqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgzMjkxOTksImV4cCI6MjA5MzkwNTE5OX0.2rSwfgAhzyeSb_ru-6K9hDKSMtFbSK1vgiBpopqM9NY';
+        
+        let supabase;
+        let namaUstadz = "";
+        let kelasBinaanList = [];
+
         document.addEventListener("DOMContentLoaded", async () => {
+            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+            namaUstadz = localStorage.getItem('nama_ustadz');
+            
             if (!namaUstadz) { window.location.href = 'login.html'; return; }
             document.getElementById('avatarHeader').textContent = namaUstadz.charAt(0).toUpperCase();
 
             await loadKelasBinaan();
             await loadTabelSantri('semua');
 
-            // Listener Dropdown Filter Utama
             document.getElementById('filterKelasTable').addEventListener('change', (e) => {
                 loadTabelSantri(e.target.value);
             });
         });
 
-        // 2. Ambil Daftar Kelas Ustadz
+        // 1. Load Daftar Kelas
         async function loadKelasBinaan() {
-            const { data, error } = await supabase.from('tabel_kelas').select('nama_kelas').eq('nama_ustadz', namaUstadz);
-            if (!error && data) {
-                kelasBinaanList = data.map(d => d.nama_kelas);
+            try {
+                const { data, error } = await supabase.from('tabel_kelas').select('nama_kelas').eq('nama_ustadz', namaUstadz);
+                if (error) throw error;
                 
-                const filterSelect = document.getElementById('filterKelasTable');
-                filterSelect.innerHTML = '<option value="semua">Semua Kelas Binaan</option>' + 
-                    kelasBinaanList.map(k => `<option value="${k}">${k}</option>`).join('');
+                if (data) {
+                    kelasBinaanList = data.map(d => d.nama_kelas);
+                    const filterSelect = document.getElementById('filterKelasTable');
+                    filterSelect.innerHTML = '<option value="semua">Semua Kelas Binaan</option>' + 
+                        kelasBinaanList.map(k => `<option value="${k}">${k}</option>`).join('');
+                }
+            } catch (err) {
+                console.error("Gagal mengambil kelas:", err);
             }
         }
 
-        // 3. Muat Data Santri ke Tabel Utama
+        // 2. Load Tabel Santri
         async function loadTabelSantri(filterKelas) {
             const tbody = document.getElementById('santriTableBody');
-            tbody.innerHTML = `<tr><td colspan="5" class="text-center p-8 text-primary font-semibold"><i class="fas fa-spinner fa-spin mr-2"></i> Mengambil data santri...</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 40px; color: var(--primary); font-weight: 600;"><i class="fas fa-spinner fa-spin"></i> Menarik data...</td></tr>`;
 
             if(kelasBinaanList.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="text-center p-8 text-gray-400 italic">Anda belum memiliki kelas. Silakan buat kelas baru.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 40px; color: var(--text-muted); font-style:italic;">Anda belum membuat kelas. Silakan Buat Kelas Baru.</td></tr>`;
                 return;
             }
 
-            let query = supabase.from('dapodik_santri').select('*');
-            if (filterKelas === 'semua') {
-                query = query.in('nama_kelas', kelasBinaanList);
-            } else {
-                query = query.eq('nama_kelas', filterKelas);
-            }
+            try {
+                let query = supabase.from('dapodik_santri').select('*');
+                if (filterKelas === 'semua') { query = query.in('nama_kelas', kelasBinaanList); } 
+                else { query = query.eq('nama_kelas', filterKelas); }
 
-            const { data, error } = await query;
-            
-            if (error || !data || data.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="text-center p-8 text-gray-400 italic">Belum ada santri di kelas ini. Klik 'Tarik Santri'.</td></tr>`;
-                return;
-            }
+                const { data, error } = await query;
+                if (error) throw error;
+                
+                if (!data || data.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 40px; color: var(--text-muted); font-style:italic;">Belum ada santri. Klik Tarik Santri.</td></tr>`;
+                    return;
+                }
 
-            tbody.innerHTML = data.map(s => `
-                <tr class="hover:bg-gray-50 transition-colors">
-                    <td class="p-4 font-mono text-xs text-gray-500">${s.nis || '-'}</td>
-                    <td class="p-4 font-bold text-gray-800">${s.nama_santri}</td>
-                    <td class="p-4 text-xs font-semibold text-primary"><span class="bg-primary/10 px-2 py-1 rounded-md">${s.nama_kelas}</span></td>
-                    <td class="p-4 text-center font-semibold text-gray-600">${s.jenis_kelamin || '-'}</td>
-                    <td class="p-4 text-center">
-                        <button onclick="keluarkanSantri('${s.nis}', '${s.nama_santri}')" class="text-red-400 hover:text-red-600 px-2" title="Keluarkan dari kelas">
-                            <i class="fas fa-user-minus"></i>
-                        </button>
-                    </td>
-                </tr>
-            `).join('');
+                tbody.innerHTML = data.map(s => `
+                    <tr>
+                        <td style="font-family: monospace; color: var(--text-muted);">${s.nis || '-'}</td>
+                        <td style="font-weight: 700;">${s.nama_santri}</td>
+                        <td><span class="badge-kelas">${s.nama_kelas}</span></td>
+                        <td style="text-align: center; font-weight:600; color: var(--text-muted);">${s.jenis_kelamin || '-'}</td>
+                        <td style="text-align: center;">
+                            <button onclick="keluarkanSantri('${s.nis}', '${s.nama_santri}')" style="background:none; border:none; color: #EF4444; font-size: 1.1rem; cursor:pointer;" title="Keluarkan">
+                                <i class="fas fa-user-times"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (err) {
+                console.error("Error tabel:", err);
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: red;">Terjadi kesalahan sistem. Cek koneksi.</td></tr>`;
+            }
         }
 
-        // 4. Proses Form Buat Kelas Baru
+        // 3. Simpan Kelas Baru
         document.getElementById('formBuatKelas').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('btnSimpanKelas');
@@ -312,24 +416,41 @@
             const jMulai = document.getElementById('inputJamMulai').value;
             const jSelesai = document.getElementById('inputJamSelesai').value;
 
-            const { error } = await supabase.from('tabel_kelas').insert([{
-                nama_kelas: nKelas, jam_mulai: jMulai, jam_selesai: jSelesai, nama_ustadz: namaUstadz
-            }]);
+            try {
+                const { error } = await supabase.from('tabel_kelas').insert([{
+                    nama_kelas: nKelas, jam_mulai: jMulai, jam_selesai: jSelesai, nama_ustadz: namaUstadz
+                }]);
+                if (error) throw error;
 
-            btn.innerHTML = oriText;
-            btn.disabled = false;
-
-            if (error) {
-                alert("Gagal membuat kelas. Pastikan nama kelas belum ada.");
-            } else {
                 alert("Alhamdulillah, Kelas berhasil dibuat!");
                 document.getElementById('formBuatKelas').reset();
                 closeModal('modalBuatKelas');
-                await loadKelasBinaan(); // Refresh dropdown
+                await loadKelasBinaan(); 
+                document.getElementById('filterKelasTable').value = nKelas; // otomatis ke kelas baru
+                await loadTabelSantri(nKelas);
+            } catch (err) {
+                alert("Gagal membuat kelas. Pastikan nama tidak duplikat.");
+                console.error(err);
+            } finally {
+                btn.innerHTML = oriText;
+                btn.disabled = false;
             }
         });
 
-        // 5. Fitur Pencarian & Tarik Santri dari Dapodik Pusat
+        // 4. Buka Modal Tarik Santri
+        function openModalTarikSantri() {
+            if(kelasBinaanList.length === 0) {
+                alert("Anda belum memiliki kelas. Buat Kelas Baru terlebih dahulu!");
+                return;
+            }
+            const selectTarget = document.getElementById('selectKelasTarget');
+            selectTarget.innerHTML = '<option value="">-- Pilih Kelas --</option>' + kelasBinaanList.map(k => `<option value="${k}">${k}</option>`).join('');
+            document.getElementById('searchDapodik').value = '';
+            document.getElementById('dapodikListContainer').innerHTML = '<div style="text-align: center; padding: 40px; font-size: 0.8rem; color: var(--text-muted);">Ketik nama untuk mencari santri...</div>';
+            openModal('modalTarikSantri');
+        }
+
+        // 5. Fitur Search Santri (Dapodik)
         let searchTimeout;
         document.getElementById('searchDapodik').addEventListener('input', (e) => {
             clearTimeout(searchTimeout);
@@ -337,67 +458,77 @@
             const container = document.getElementById('dapodikListContainer');
 
             if (query.length < 3) {
-                container.innerHTML = '<div class="text-center p-4 text-xs text-gray-400 mt-5">Ketik minimal 3 huruf...</div>';
+                container.innerHTML = '<div style="text-align: center; padding: 40px; font-size: 0.8rem; color: var(--text-muted);">Ketik minimal 3 huruf...</div>';
                 return;
             }
 
-            container.innerHTML = '<div class="text-center p-4 text-xs text-primary mt-5"><i class="fas fa-spinner fa-spin"></i> Mencari...</div>';
+            container.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--primary);"><i class="fas fa-spinner fa-spin"></i> Mencari database...</div>';
             
             searchTimeout = setTimeout(async () => {
-                // Cari nama santri pakai fungsi 'ilike' (case-insensitive)
-                const { data, error } = await supabase.from('dapodik_santri').select('*').ilike('nama_santri', `%${query}%`).limit(15);
-                
-                if (error || !data || data.length === 0) {
-                    container.innerHTML = '<div class="text-center p-4 text-xs text-red-400 mt-5"><i class="fas fa-exclamation-circle"></i> Santri tidak ditemukan.</div>';
-                    return;
-                }
+                try {
+                    const { data, error } = await supabase.from('dapodik_santri').select('*').ilike('nama_santri', `%${query}%`).limit(15);
+                    if (error) throw error;
 
-                container.innerHTML = data.map(s => {
-                    // Deteksi apakah sudah punya kelas
-                    let statusKelas = s.nama_kelas ? `<span class="text-[10px] text-orange-500 bg-orange-100 px-1 rounded">Di Kelas: ${s.nama_kelas}</span>` : `<span class="text-[10px] text-primary bg-primary/10 px-1 rounded">Belum ada kelas</span>`;
-                    
-                    return `
-                    <div class="bg-white border border-gray-100 p-3 rounded-lg flex justify-between items-center shadow-sm">
-                        <div>
-                            <p class="text-sm font-bold text-gray-800">${s.nama_santri}</p>
-                            <p class="text-xs text-gray-500 font-mono">NIS: ${s.nis || '-'}</p>
-                            ${statusKelas}
-                        </div>
-                        <button onclick="eksekusiTarikSantri('${s.nis}', '${s.nama_santri}')" class="bg-primary/10 text-primary hover:bg-primary hover:text-white w-8 h-8 rounded-full flex items-center justify-center transition-colors">
-                            <i class="fas fa-plus text-sm"></i>
-                        </button>
-                    </div>`;
-                }).join('');
-            }, 500); // Delay 500ms agar tidak spam database saat mengetik
+                    if (!data || data.length === 0) {
+                        container.innerHTML = '<div style="text-align: center; padding: 40px; color: #EF4444;"><i class="fas fa-exclamation-triangle"></i> Nama tidak ditemukan.</div>';
+                        return;
+                    }
+
+                    container.innerHTML = data.map(s => {
+                        let classBadge = s.nama_kelas ? `<span style="font-size:0.65rem; background:rgba(245, 158, 11, 0.1); color:#F59E0B; padding:3px 6px; border-radius:4px;">Di Kelas: ${s.nama_kelas}</span>` 
+                                                      : `<span style="font-size:0.65rem; background:rgba(16, 185, 129, 0.1); color:var(--primary); padding:3px 6px; border-radius:4px;">Belum Ada Kelas</span>`;
+                        return `
+                        <div class="santri-card">
+                            <div>
+                                <div class="santri-name">${s.nama_santri}</div>
+                                <div class="santri-nis">NIS: ${s.nis || '-'}</div>
+                                <div style="margin-top:4px;">${classBadge}</div>
+                            </div>
+                            <button class="btn-add-mini" onclick="eksekusiTarikSantri('${s.nis}', '${s.nama_santri}')" title="Tambahkan ke Kelas">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>`;
+                    }).join('');
+                } catch (err) {
+                    console.error("Error search:", err);
+                    container.innerHTML = '<div style="text-align: center; color: red;">Gagal mencari data.</div>';
+                }
+            }, 600);
         });
 
-        // 6. Eksekusi Tarik Santri ke Kelas
+        // 6. Tarik Santri
         async function eksekusiTarikSantri(nis, nama) {
             const targetKelas = document.getElementById('selectKelasTarget').value;
-            if(!targetKelas) { alert("Pilih Kelas Tujuan terlebih dahulu!"); return; }
+            if(!targetKelas) { alert("Pilih Kelas Tujuan dari dropdown di atas terlebih dahulu!"); return; }
 
-            const konfirmasi = confirm(`Tarik santri ${nama} ke kelas ${targetKelas}?`);
-            if(!konfirmasi) return;
-
-            const { error } = await supabase.from('dapodik_santri').update({ nama_kelas: targetKelas }).eq('nis', nis);
-            
-            if(error) {
-                alert("Terjadi kesalahan sistem saat menarik data.");
-            } else {
-                alert(`${nama} berhasil ditambahkan ke kelas ${targetKelas}!`);
-                closeModal('modalTarikSantri');
-                // Refresh tabel dengan kelas yang baru saja ditarik
-                document.getElementById('filterKelasTable').value = targetKelas;
-                loadTabelSantri(targetKelas);
+            if(confirm(`Tarik santri ${nama} ke kelas ${targetKelas}?`)) {
+                try {
+                    const { error } = await supabase.from('dapodik_santri').update({ nama_kelas: targetKelas }).eq('nis', nis);
+                    if (error) throw error;
+                    
+                    alert(`${nama} berhasil masuk ke kelas ${targetKelas}!`);
+                    closeModal('modalTarikSantri');
+                    document.getElementById('filterKelasTable').value = targetKelas;
+                    await loadTabelSantri(targetKelas);
+                } catch(err) {
+                    alert("Gagal menarik data.");
+                    console.error(err);
+                }
             }
         }
 
-        // 7. Fitur Keluarkan Santri
+        // 7. Keluarkan Santri
         async function keluarkanSantri(nis, nama) {
-            if(confirm(`Keluarkan ${nama} dari kelas ini? Status kelasnya akan dikosongkan di Dapodik.`)) {
-                await supabase.from('dapodik_santri').update({ nama_kelas: null }).eq('nis', nis);
-                const filterNow = document.getElementById('filterKelasTable').value;
-                loadTabelSantri(filterNow);
+            if(confirm(`Keluarkan ${nama} dari kelas ini? Status kelasnya di Dapodik akan menjadi kosong.`)) {
+                try {
+                    const { error } = await supabase.from('dapodik_santri').update({ nama_kelas: null }).eq('nis', nis);
+                    if (error) throw error;
+                    
+                    const filterNow = document.getElementById('filterKelasTable').value;
+                    await loadTabelSantri(filterNow);
+                } catch(err) {
+                    alert("Gagal mengeluarkan santri.");
+                }
             }
         }
 
