@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Data Santri - RQ Kamila (Fresh UI)</title>
+    <title>Data Santri - RQ Kamila</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,61 +14,51 @@
 
     <style>
         /* =========================================
-           1. TEMA TERANG (FRESH & CLEAN)
+           TEMA TERANG (SINKRON DENGAN DASHBOARD)
            ========================================= */
         :root {
-            --bg-body: #F3F4F6;
+            --bg-body: #F4F6FB;
             --surface: #FFFFFF;
-            --text-main: #1E293B;
-            --text-muted: #64748B;
-            --primary: #0EA5E9; /* Sky Blue cerah */
-            --primary-hover: #0284C7;
-            --sidebar-bg: #FFFFFF;
-            --sidebar-text: #475569;
-            --border: #E2E8F0;
-            --modal-bg: rgba(15, 23, 42, 0.4);
+            --text-main: #1A1A2E;
+            --text-muted: #7E7E9A;
+            --primary: #10B981; 
+            --sidebar-bg: #1E293B; 
+            --border: #E8E6F0;
+            --modal-bg: rgba(0,0,0,0.55);
             --input-bg: #F8FAFC;
             --danger: #EF4444;
-            --success: #10B981;
-            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
         }
 
         /* =========================================
-           2. TEMA GELAP (MODERN DARK)
+           TEMA GELAP (SINKRON DENGAN DASHBOARD)
            ========================================= */
         [data-theme="dark"] {
-            --bg-body: #0F172A;
-            --surface: #1E293B;
-            --text-main: #F8FAFC;
-            --text-muted: #94A3B8;
-            --primary: #38BDF8;
-            --primary-hover: #0EA5E9;
-            --sidebar-bg: #1E293B;
-            --sidebar-text: #CBD5E1;
-            --border: #334155;
-            --modal-bg: rgba(0, 0, 0, 0.7);
-            --input-bg: #0F172A;
-            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+            --bg-body: #0B0B0F;
+            --surface: #141418;
+            --text-main: #ECEAF5;
+            --text-muted: #8A87A0;
+            --sidebar-bg: #0B0B0F;
+            --border: #1F1F28;
+            --modal-bg: rgba(0,0,0,0.85);
+            --input-bg: #1A1A22;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; transition: background-color 0.3s ease, border-color 0.3s ease; }
 
         body { background-color: var(--bg-body); color: var(--text-main); height: 100vh; overflow: hidden; }
 
-        /* =========================================
-           3. HOLY GRAIL LAYOUT (CSS GRID)
-           ========================================= */
+        /* GRID SYSTEM MOBILE-FIRST (SINKRON DASHBOARD) */
         .holy-grail-layout {
             display: grid; height: 100vh;
             grid-template-columns: 1fr;
-            grid-template-rows: 70px 1fr;
+            grid-template-rows: 75px 1fr;
             grid-template-areas: "header" "main";
             overflow-y: auto; overflow-x: hidden;
         }
 
         @media (min-width: 1025px) {
             .holy-grail-layout {
-                grid-template-columns: 250px 1fr;
+                grid-template-columns: 260px 1fr;
                 grid-template-areas: "aside-left header" "aside-left main";
                 overflow: hidden;
             }
@@ -77,105 +67,104 @@
         }
 
         /* REGIONS */
-        .region--header { grid-area: header; background: var(--surface); display: flex; justify-content: space-between; align-items: center; padding: 0 20px; border-bottom: 1px solid var(--border); z-index: 10; }
-        .region--aside-left { grid-area: aside-left; background: var(--sidebar-bg); color: var(--sidebar-text); display: flex; flex-direction: column; padding: 25px 20px; z-index: 100; border-right: 1px solid var(--border); }
+        .region--header { grid-area: header; background: var(--surface); display: flex; justify-content: space-between; align-items: center; padding: 0 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); z-index: 10; }
+        .region--aside-left { grid-area: aside-left; background: var(--sidebar-bg); color: white; display: flex; flex-direction: column; padding: 25px 20px; z-index: 100; }
         .region--main { grid-area: main; padding: 20px; display: flex; flex-direction: column; max-width: 100%; gap: 20px; }
 
         /* NAVBAR KIRI */
         .brand-logo-area { display: flex; align-items: center; gap: 12px; margin-bottom: 40px; }
-        .brand-logo-area img { width: 40px; height: 40px; border-radius: 10px; }
-        .nav-link { display: flex; align-items: center; gap: 12px; padding: 12px 15px; color: var(--text-muted); text-decoration: none; border-radius: 12px; font-weight: 500; font-size: 0.9rem; margin-bottom: 5px; }
-        .nav-link:hover { background: var(--input-bg); color: var(--primary); }
-        .nav-link.active { background: var(--primary); color: white; box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3); }
+        .brand-logo-area img { width: 40px; height: 40px; background: white; padding: 4px; border-radius: 10px; }
+        .nav-link { display: flex; align-items: center; gap: 12px; padding: 12px 15px; color: #94A3B8; text-decoration: none; border-radius: 10px; font-weight: 500; font-size: 0.9rem; transition: 0.3s; margin-bottom: 5px; }
+        .nav-link:hover { background: rgba(255,255,255,0.05); color: white; }
+        .nav-link.active { background: var(--primary); color: white; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4); }
 
         @media (max-width: 1024px) {
-            .region--aside-left { position: fixed; left: -300px; top: 0; height: 100vh; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); transform: translateX(0); }
-            .region--aside-left.active { transform: translateX(300px); box-shadow: 10px 0 30px rgba(0,0,0,0.2); }
+            .region--aside-left { position: fixed; left: -300px; top: 0; height: 100vh; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+            .region--aside-left.active { left: 0; box-shadow: 10px 0 30px rgba(0,0,0,0.5); }
         }
         .mobile-toggle { background: none; border: none; font-size: 1.5rem; color: var(--text-main); cursor: pointer; }
 
-        /* HEADER ACTIONS */
+        /* SAKLAR TEMA & AVATAR */
         .header-actions { display: flex; align-items: center; gap: 18px; }
-        .theme-btn { background: none; border: none; color: var(--text-muted); font-size: 1.3rem; cursor: pointer; }
+        .theme-btn { background: none; border: none; color: var(--text-main); font-size: 1.3rem; cursor: pointer; transition: 0.3s; }
         .theme-btn:hover { color: var(--primary); }
-        .avatar-box { width: 38px; height: 38px; border-radius: 50%; background: var(--input-bg); color: var(--primary); border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1rem; }
+        .avatar-box { width: 40px; height: 40px; border-radius: 50%; background: var(--bg-body); color: var(--primary); border: 2px solid var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.1rem; box-shadow: 0 2px 5px rgba(16,185,129,0.1); }
 
         /* =========================================
-           4. KONTEN & AKSI
+           KONTEN UTAMA (DATA SANTRI)
            ========================================= */
-        .action-bar { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 20px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 15px; box-shadow: var(--card-shadow); }
-        .filter-group { flex: 1; min-width: 200px; display: flex; flex-direction: column; gap: 5px; }
+        .action-bar { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 20px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 15px; }
+        .filter-group { flex: 1; min-width: 200px; display: flex; flex-direction: column; gap: 6px; }
         .btn-group { display: flex; gap: 10px; flex-wrap: wrap; }
         
-        .input-box { width: 100%; padding: 10px 15px; background: var(--input-bg); border: 1px solid var(--border); color: var(--text-main); border-radius: 10px; outline: none; transition: all 0.2s; font-size: 0.9rem; }
-        .input-box:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15); }
+        .input-box { width: 100%; padding: 12px 15px; background: var(--input-bg); border: 1px solid var(--border); color: var(--text-main); border-radius: 10px; outline: none; font-family: inherit; font-size: 0.85rem; transition: 0.3s; }
+        .input-box:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(16,185,129,0.1); }
         
-        .btn-primary { background: var(--primary); color: white; padding: 10px 18px; border: none; border-radius: 10px; font-weight: 500; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 10px rgba(14, 165, 233, 0.2); }
-        .btn-primary:hover { background: var(--primary-hover); transform: translateY(-1px); }
-        .btn-outline { background: transparent; color: var(--primary); border: 1px solid var(--primary); padding: 10px 18px; border-radius: 10px; font-weight: 500; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; gap: 8px; }
-        .btn-outline:hover { background: rgba(14, 165, 233, 0.05); }
+        .btn-primary { background: var(--primary); color: white; padding: 12px 20px; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.3s; box-shadow: 0 4px 10px rgba(16,185,129,0.3); font-size: 0.85rem; }
+        .btn-primary:hover { filter: brightness(0.9); }
+        .btn-outline { background: transparent; color: var(--primary); border: 1px solid var(--primary); padding: 12px 20px; border-radius: 10px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.3s; font-size: 0.85rem; }
+        .btn-outline:hover { background: rgba(16,185,129,0.1); }
 
-        /* =========================================
-           5. TABEL RESPONSIF CERDAS (MOBILE CARD)
-           ========================================= */
-        .table-container { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; box-shadow: var(--card-shadow); overflow: hidden; }
-        .custom-table { width: 100%; border-collapse: collapse; text-align: left; }
-        .custom-table th { background: var(--input-bg); padding: 15px; color: var(--text-muted); font-weight: 600; font-size: 0.85rem; border-bottom: 1px solid var(--border); text-transform: uppercase; letter-spacing: 0.5px; }
-        .custom-table td { padding: 15px; border-bottom: 1px solid var(--border); color: var(--text-main); font-size: 0.9rem; vertical-align: middle; }
+        /* TABEL RESPONSIF CERDAS */
+        .table-container { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
+        .custom-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem; }
+        .custom-table th { background: var(--bg-body); padding: 15px; color: var(--text-muted); font-weight: 600; border-bottom: 2px solid var(--border); }
+        .custom-table td { padding: 15px; border-bottom: 1px solid var(--border); color: var(--text-main); vertical-align: middle; }
         .custom-table tbody tr:hover { background: var(--input-bg); }
         .custom-table tbody tr:last-child td { border-bottom: none; }
         
-        .badge { font-size: 0.7rem; padding: 4px 8px; border-radius: 6px; font-weight: 600; text-transform: uppercase; }
-        .badge-kelas { background: rgba(14, 165, 233, 0.1); color: var(--primary); }
-        .action-icon-btn { background: none; border: none; font-size: 1.1rem; cursor: pointer; padding: 5px; border-radius: 6px; }
+        .badge { font-size: 0.7rem; padding: 4px 8px; border-radius: 6px; font-weight: 700; text-transform: uppercase; }
+        .badge-kelas { background: rgba(16, 185, 129, 0.1); color: var(--primary); }
+        
+        .action-icon-btn { background: none; border: none; font-size: 1.1rem; cursor: pointer; padding: 6px; border-radius: 6px; transition: 0.2s; }
         .action-icon-btn.view { color: var(--primary); }
         .action-icon-btn.exam { color: #8B5CF6; }
         .action-icon-btn.delete { color: var(--danger); }
-        .action-icon-btn:hover { background: var(--border); }
+        .action-icon-btn:hover { background: var(--bg-body); transform: scale(1.1); }
 
         /* Mode HP Android: Ubah Tabel Jadi Kartu */
         @media (max-width: 768px) {
             .custom-table thead { display: none; }
             .custom-table, .custom-table tbody, .custom-table tr, .custom-table td { display: block; width: 100%; }
             .custom-table tr { border-bottom: 8px solid var(--bg-body); padding: 10px 15px; }
-            .custom-table td { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px dashed var(--border); text-align: right; }
+            .custom-table td { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px dashed var(--border); text-align: right; }
             .custom-table td::before { content: attr(data-label); font-weight: 600; color: var(--text-muted); text-transform: uppercase; font-size: 0.75rem; }
-            .custom-table td:last-child { border-bottom: none; justify-content: flex-end; gap: 10px; padding-top: 12px; }
+            .custom-table td:last-child { border-bottom: none; justify-content: flex-end; gap: 10px; padding-top: 15px; }
         }
 
         /* =========================================
-           6. MODAL POP-UP (CLEAN DESIGN)
+           MODAL POP-UP (CLEAN DESIGN)
            ========================================= */
         .modal-overlay { position: fixed; inset: 0; background: var(--modal-bg); backdrop-filter: blur(5px); z-index: 9999; display: none; align-items: center; justify-content: center; padding: 20px; opacity: 0; transition: opacity 0.3s; }
         .modal-overlay.active { display: flex; opacity: 1; }
         
-        .modal-card { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; width: 100%; max-width: 500px; padding: 25px; position: relative; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); transform: translateY(20px); transition: transform 0.3s; max-height: 90vh; overflow-y: auto; }
+        .modal-card { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; width: 100%; max-width: 480px; padding: 25px; position: relative; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); transform: translateY(20px); transition: transform 0.3s; max-height: 90vh; overflow-y: auto; }
         .modal-overlay.active .modal-card { transform: translateY(0); }
         
         .modal-close { position: absolute; top: 20px; right: 20px; background: none; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer; line-height: 1; }
-        .modal-title { font-size: 1.25rem; font-weight: 600; color: var(--text-main); margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
+        .modal-title { font-size: 1.1rem; font-weight: 700; color: var(--text-main); margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
         
         .form-group { margin-bottom: 15px; }
-        .form-label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 6px; }
+        .form-label { display: block; font-size: 0.75rem; font-weight: 600; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%; }
 
         /* Spesifik Profil Modal */
         .profile-header { display: flex; flex-direction: column; align-items: center; text-align: center; margin-bottom: 20px; }
-        .profile-avatar { width: 80px; height: 80px; border-radius: 50%; background: var(--input-bg); border: 3px solid var(--primary); font-size: 2rem; font-weight: 700; color: var(--primary); display: flex; align-items: center; justify-content: center; margin-bottom: 15px; }
-        .profile-data-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; background: var(--input-bg); padding: 15px; border-radius: 12px; border: 1px solid var(--border); }
+        .profile-avatar { width: 80px; height: 80px; border-radius: 50%; background: var(--input-bg); border: 3px solid var(--primary); font-size: 2rem; font-weight: 700; color: var(--primary); display: flex; align-items: center; justify-content: center; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(16,185,129,0.15); }
+        .profile-data-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; background: var(--input-bg); padding: 18px; border-radius: 12px; border: 1px solid var(--border); }
         .profile-data-item { display: flex; flex-direction: column; }
         .profile-data-item.full { grid-column: 1 / -1; }
-        .profile-data-label { font-size: 0.7rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; }
-        .profile-data-val { font-size: 0.9rem; font-weight: 500; color: var(--text-main); }
+        .profile-data-label { font-size: 0.7rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; margin-bottom: 3px; }
+        .profile-data-val { font-size: 0.85rem; font-weight: 600; color: var(--text-main); }
 
         /* Search List (Tarik Santri) */
         .search-result-box { background: var(--input-bg); border: 1px solid var(--border); border-radius: 12px; margin-top: 10px; height: 250px; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 8px; }
         .santri-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px; display: flex; justify-content: space-between; align-items: center; }
-        .santri-name { font-size: 0.85rem; font-weight: 600; color: var(--text-main); }
+        .santri-name { font-size: 0.85rem; font-weight: 700; color: var(--text-main); }
 
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
     </style>
 </head>
 <body>
@@ -185,8 +174,8 @@
         <!-- SIDEBAR -->
         <aside class="region region--aside-left" id="sidebar">
             <div class="brand-logo-area">
-                <img src="logorqkamila.png" alt="RQ" onerror="this.src='https://ui-avatars.com/api/?name=RQ&background=0EA5E9&color=fff'">
-                <h1 style="font-size: 1.2rem; font-weight: 700; margin: 0;">RQ Kamila</h1>
+                <img src="logorqkamila.png" alt="RQ" onerror="this.src='https://ui-avatars.com/api/?name=RQ&background=ffffff&color=10B981'">
+                <h1 style="font-size: 1.2rem; font-weight: 700; margin: 0; letter-spacing: 0.5px;">RQ Kamila</h1>
             </div>
             <nav style="flex: 1;">
                 <a href="dashboard.html" class="nav-link"><i class="fas fa-border-all w-[20px]"></i> Dashboard</a>
@@ -195,7 +184,7 @@
                 <a href="laporan.html" class="nav-link"><i class="fas fa-chart-pie w-[20px]"></i> Laporan</a>
                 <a href="pengaturan.html" class="nav-link"><i class="fas fa-cog w-[20px]"></i> Pengaturan</a>
             </nav>
-            <div style="margin-top: auto;">
+            <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; margin-top: auto;">
                 <a href="javascript:void(0);" onclick="logoutApp()" class="nav-link" style="color: var(--danger);"><i class="fas fa-sign-out-alt"></i> Keluar</a>
             </div>
         </aside>
@@ -204,7 +193,7 @@
         <header class="region region--header">
             <div style="display: flex; align-items: center; gap: 15px;">
                 <button class="mobile-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
-                <h2 style="font-size: 1.2rem; font-weight: 600;">Data Santri</h2>
+                <h2 style="font-size: 1.2rem; font-weight: 700; color: var(--text-main);">Data Santri</h2>
             </div>
             <div class="header-actions">
                 <button class="theme-btn" onclick="toggleTheme()" id="btnThemeToggle"><i class="fas fa-moon" id="themeIcon"></i></button>
@@ -218,7 +207,7 @@
             <div class="action-bar">
                 <div class="filter-group">
                     <span class="form-label">Filter Kelas Binaan</span>
-                    <select id="filterKelasTable" class="input-box" style="font-weight: 500; cursor: pointer;">
+                    <select id="filterKelasTable" class="input-box" style="font-weight: 600; cursor: pointer;">
                         <option value="semua">Semua Kelas Binaan</option>
                     </select>
                 </div>
@@ -236,12 +225,12 @@
                             <th>NIS</th>
                             <th>Nama Santri</th>
                             <th>Kelas</th>
-                            <th>L/P</th>
+                            <th style="text-align: center;">L/P</th>
                             <th style="text-align: right;">Aksi</th>
                         </tr>
                     </thead>
                     <tbody id="santriTableBody">
-                        <tr><td colspan="5" style="text-align: center; padding: 40px;"><i class="fas fa-spinner fa-spin"></i> Menyiapkan data...</td></tr>
+                        <tr><td colspan="5" style="text-align: center; padding: 40px;"><i class="fas fa-spinner fa-spin" style="color: var(--primary);"></i> Menyiapkan data...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -266,7 +255,7 @@
                     <div><label class="form-label">Jam Mulai</label><input type="time" id="inputJamMulai" class="input-box" required></div>
                     <div><label class="form-label">Jam Selesai</label><input type="time" id="inputJamSelesai" class="input-box" required></div>
                 </div>
-                <button type="submit" class="btn-primary" id="btnSimpanKelas" style="width: 100%; justify-content: center; margin-top: 10px;">Simpan Kelas Baru</button>
+                <button type="submit" class="btn-primary" id="btnSimpanKelas" style="width: 100%; justify-content: center; margin-top: 15px;">Simpan Kelas Baru</button>
             </form>
         </div>
     </div>
@@ -278,10 +267,10 @@
             <h3 class="modal-title"><i class="fas fa-users" style="color: var(--primary);"></i> Tarik Santri Binaan</h3>
             <div class="form-group">
                 <label class="form-label">Tujuan Kelas:</label>
-                <select id="selectKelasTarget" class="input-box" style="cursor: pointer;"></select>
+                <select id="selectKelasTarget" class="input-box" style="font-weight: 600; cursor: pointer;"></select>
             </div>
             <div class="form-group" style="position: relative;">
-                <i class="fas fa-search" style="position: absolute; left: 15px; top: 38px; color: var(--text-muted);"></i>
+                <i class="fas fa-search" style="position: absolute; left: 15px; top: 35px; color: var(--text-muted);"></i>
                 <label class="form-label">Cari Nama Santri (Pusat Dapodik):</label>
                 <input type="text" id="searchDapodik" class="input-box" placeholder="Ketik minimal 3 huruf..." style="padding-left: 45px;" autocomplete="off">
             </div>
@@ -297,8 +286,8 @@
             <button class="modal-close" onclick="closeModal('modalProfilSantri')">&times;</button>
             <div class="profile-header">
                 <div class="profile-avatar" id="profAvatar">A</div>
-                <h3 style="margin: 0; font-size: 1.2rem; font-weight: 600;" id="profNama">Nama Santri</h3>
-                <p style="margin: 5px 0 0 0; color: var(--text-muted); font-size: 0.85rem;" id="profNisKelas">NIS: - • Kelas: -</p>
+                <h3 style="margin: 0; font-size: 1.2rem; font-weight: 700; color: var(--text-main);" id="profNama">Nama Santri</h3>
+                <p style="margin: 5px 0 0 0; color: var(--text-muted); font-size: 0.85rem; font-weight: 500;" id="profNisKelas">NIS: - • Kelas: -</p>
             </div>
             <div class="profile-data-grid">
                 <div class="profile-data-item"><span class="profile-data-label">Jenis Kelamin</span><span class="profile-data-val" id="profJk">-</span></div>
@@ -308,7 +297,7 @@
                 <div class="profile-data-item"><span class="profile-data-label">Ayah Kandung</span><span class="profile-data-val" id="profAyah">-</span></div>
                 <div class="profile-data-item"><span class="profile-data-label">Ibu Kandung</span><span class="profile-data-val" id="profIbu">-</span></div>
             </div>
-            <a id="btnHubungiWA" href="#" target="_blank" class="btn-primary" style="background: var(--success); width: 100%; justify-content: center; margin-top: 20px; text-decoration: none;">
+            <a id="btnHubungiWA" href="#" target="_blank" class="btn-primary" style="background: #25D366; width: 100%; justify-content: center; margin-top: 20px; text-decoration: none;">
                 <i class="fab fa-whatsapp" style="font-size:1.2rem;"></i> Hubungi via WhatsApp
             </a>
         </div>
@@ -320,8 +309,8 @@
             <button class="modal-close" onclick="closeModal('modalUjian')">&times;</button>
             <h3 class="modal-title"><i class="fas fa-graduation-cap" style="color: #8B5CF6;"></i> Ujian Juziyyah</h3>
             <div style="background: var(--input-bg); padding: 12px 15px; border-radius: 10px; margin-bottom: 20px; border-left: 4px solid #8B5CF6;">
-                <strong id="ujNamaSantri" style="display:block; font-size:0.95rem;">-</strong>
-                <span id="ujNisSantri" style="font-size: 0.75rem; color:var(--text-muted);">NIS: -</span>
+                <strong id="ujNamaSantri" style="display:block; font-size:0.95rem; font-weight:700;">-</strong>
+                <span id="ujNisSantri" style="font-size: 0.75rem; color:var(--text-muted); font-weight:600;">NIS: -</span>
             </div>
             <div class="form-group"><label class="form-label">Tgl Ujian</label><input type="date" class="input-box" id="ujTgl"></div>
             <div class="grid-2 form-group">
@@ -331,12 +320,12 @@
             <div style="background: var(--input-bg); padding: 15px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 20px;">
                 <label class="form-label" style="text-align: center; margin-bottom: 10px;">Nilai Komponen (0-100)</label>
                 <div style="display:flex; gap:10px;">
-                    <div style="flex:1; text-align:center;"><span style="font-size:0.7rem; color:var(--text-muted); font-weight:600;">Lancar</span><input type="number" class="input-box" placeholder="0" style="text-align:center;"></div>
-                    <div style="flex:1; text-align:center;"><span style="font-size:0.7rem; color:var(--text-muted); font-weight:600;">Fashohah</span><input type="number" class="input-box" placeholder="0" style="text-align:center;"></div>
-                    <div style="flex:1; text-align:center;"><span style="font-size:0.7rem; color:var(--text-muted); font-weight:600;">Tajwid</span><input type="number" class="input-box" placeholder="0" style="text-align:center;"></div>
+                    <div style="flex:1; text-align:center;"><span style="font-size:0.7rem; color:var(--text-muted); font-weight:700; text-transform:uppercase;">Lancar</span><input type="number" class="input-box" placeholder="0" style="text-align:center; margin-top:5px;"></div>
+                    <div style="flex:1; text-align:center;"><span style="font-size:0.7rem; color:var(--text-muted); font-weight:700; text-transform:uppercase;">Fashohah</span><input type="number" class="input-box" placeholder="0" style="text-align:center; margin-top:5px;"></div>
+                    <div style="flex:1; text-align:center;"><span style="font-size:0.7rem; color:var(--text-muted); font-weight:700; text-transform:uppercase;">Tajwid</span><input type="number" class="input-box" placeholder="0" style="text-align:center; margin-top:5px;"></div>
                 </div>
             </div>
-            <button class="btn-primary" style="background: #8B5CF6; width: 100%; justify-content: center;" onclick="alert('Fitur rekam nilai belum aktif di modul ini.')"><i class="fas fa-check-circle"></i> Simpan Nilai</button>
+            <button class="btn-primary" style="background: #8B5CF6; width: 100%; justify-content: center;" onclick="alert('Fitur rekam nilai belum aktif di modul ini.')"><i class="fas fa-check-circle"></i> Sahkan Nilai</button>
         </div>
     </div>
 
@@ -436,14 +425,14 @@
 
             tbody.innerHTML = data.map(s => `
                 <tr>
-                    <td data-label="NIS" style="font-family: monospace; font-size: 0.8rem; color: var(--text-muted);">${s.nis || '-'}</td>
-                    <td data-label="Nama Santri" style="font-weight: 600;">${s.nama_lengkap}</td>
+                    <td data-label="NIS" style="font-family: monospace; font-size: 0.8rem; color: var(--text-muted); font-weight:600;">${s.nis || '-'}</td>
+                    <td data-label="Nama Santri" style="font-weight: 700;">${s.nama_lengkap}</td>
                     <td data-label="Kelas"><span class="badge badge-kelas">${s.nama_kelas}</span></td>
-                    <td data-label="L/P">${s.jenis_kelamin === 'Laki-laki' || s.jenis_kelamin === 'L' ? 'L' : 'P'}</td>
+                    <td data-label="L/P" style="text-align:center; font-weight:600; color:var(--text-muted);">${s.jenis_kelamin === 'Laki-laki' || s.jenis_kelamin === 'L' ? 'L' : 'P'}</td>
                     <td data-label="Aksi" style="text-align: right;">
-                        <button class="action-icon-btn view" onclick="showProfile('${s.nis}')" title="Profil"><i class="fas fa-user-circle"></i></button>
+                        <button class="action-icon-btn view" onclick="showProfile('${s.nis}')" title="Profil Lengkap"><i class="fas fa-id-card"></i></button>
                         <button class="action-icon-btn exam" onclick="openUjianModal('${s.nis}', '${s.nama_lengkap}')" title="Ujian Juziyyah"><i class="fas fa-graduation-cap"></i></button>
-                        <button class="action-icon-btn delete" onclick="keluarkanSantri('${s.nis}', '${s.nama_lengkap}')" title="Keluarkan"><i class="fas fa-trash-alt"></i></button>
+                        <button class="action-icon-btn delete" onclick="keluarkanSantri('${s.nis}', '${s.nama_lengkap}')" title="Keluarkan"><i class="fas fa-user-minus"></i></button>
                     </td>
                 </tr>
             `).join('');
@@ -464,17 +453,17 @@
             btn.innerHTML = 'Simpan Kelas Baru'; btn.disabled = false;
             if (error) alert("Gagal! Kelas mungkin sudah ada.");
             else {
-                alert("Berhasil!"); document.getElementById('formBuatKelas').reset(); closeModal('modalBuatKelas');
+                alert("Alhamdulillah, Berhasil!"); document.getElementById('formBuatKelas').reset(); closeModal('modalBuatKelas');
                 await loadKelasBinaan(); document.getElementById('filterKelasTable').value = nKelas; loadTabelSantri(nKelas);
             }
         });
 
         // 3d. Pencarian & Tarik Santri (Select/Update: dapodik_santri)
         function openModalTarikSantri() {
-            if(kelasBinaanList.length === 0) { alert("Buat Kelas Baru dulu!"); return; }
+            if(kelasBinaanList.length === 0) { alert("Buat Kelas Baru terlebih dahulu!"); return; }
             const select = document.getElementById('selectKelasTarget');
             select.innerHTML = '<option value="">-- Pilih Kelas Tujuan --</option>' + kelasBinaanList.map(k => `<option value="${k}">${k}</option>`).join('');
-            document.getElementById('dapodikListContainer').innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-muted);">Ketik nama...</div>';
+            document.getElementById('dapodikListContainer').innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-muted); font-size:0.85rem;">Ketik nama untuk mencari...</div>';
             openModal('modalTarikSantri');
         }
 
@@ -485,25 +474,25 @@
             const box = document.getElementById('dapodikListContainer');
             if (val.length < 3) return;
 
-            box.innerHTML = '<div style="text-align:center; padding:30px;"><i class="fas fa-spinner fa-spin" style="color:var(--primary);"></i> Mencari...</div>';
+            box.innerHTML = '<div style="text-align:center; padding:30px;"><i class="fas fa-spinner fa-spin" style="color:var(--primary);"></i> Mencari database...</div>';
             searchTimer = setTimeout(async () => {
                 const { data } = await supabase.from('dapodik_santri').select('nis, nama_lengkap, nama_kelas').ilike('nama_lengkap', `%${val}%`).limit(15);
-                if (!data || data.length === 0) { box.innerHTML = '<div style="text-align:center; padding:30px; color:var(--danger);">Tidak ditemukan.</div>'; return; }
+                if (!data || data.length === 0) { box.innerHTML = '<div style="text-align:center; padding:30px; color:var(--danger); font-weight:600;">Santri tidak ditemukan.</div>'; return; }
                 
                 box.innerHTML = data.map(s => `
                     <div class="santri-card">
                         <div>
                             <div class="santri-name">${s.nama_lengkap}</div>
-                            <div style="font-size:0.7rem; color:var(--text-muted);">${s.nis || '-'} • ${s.nama_kelas ? `Kelas: ${s.nama_kelas}` : 'Belum Ada Kelas'}</div>
+                            <div style="font-size:0.7rem; color:var(--text-muted); font-weight:600;">NIS: ${s.nis || '-'} • ${s.nama_kelas ? `<span style="color:#F59E0B">Kelas: ${s.nama_kelas}</span>` : '<span style="color:var(--primary)">Belum Ada Kelas</span>'}</div>
                         </div>
-                        <button class="btn-primary" style="padding: 6px 12px; font-size: 0.75rem;" onclick="tarikSantri('${s.nis}', '${s.nama_lengkap}')">Tarik</button>
+                        <button class="btn-primary" style="padding: 6px 12px; font-size: 0.75rem;" onclick="tarikSantri('${s.nis}', '${s.nama_lengkap}')"><i class="fas fa-plus"></i></button>
                     </div>`).join('');
             }, 500);
         });
 
         async function tarikSantri(nis, nama) {
             const target = document.getElementById('selectKelasTarget').value;
-            if(!target) { alert("Pilih kelas tujuan di atas!"); return; }
+            if(!target) { alert("Pilih kelas tujuan di dropdown atas!"); return; }
             if(confirm(`Tarik ${nama} ke kelas ${target}?`)) {
                 await supabase.from('dapodik_santri').update({ nama_kelas: target }).eq('nis', nis);
                 closeModal('modalTarikSantri');
@@ -513,7 +502,7 @@
 
         // 3e. Keluarkan Santri (Update dapodik_santri -> null)
         async function keluarkanSantri(nis, nama) {
-            if(confirm(`Keluarkan ${nama} dari kelas?`)) {
+            if(confirm(`Keluarkan ${nama} dari kelas? Status kelasnya di database akan dikosongkan.`)) {
                 await supabase.from('dapodik_santri').update({ nama_kelas: null }).eq('nis', nis);
                 loadTabelSantri(document.getElementById('filterKelasTable').value);
             }
@@ -533,8 +522,9 @@
             document.getElementById('profTtl').textContent = ttl;
             document.getElementById('profSekolah').textContent = s.asal_sekolah || '-';
             document.getElementById('profAlamat').textContent = s.alamat_domisili || '-';
-            document.getElementById('profAyah').textContent = `${s.nama_ayah_kandung || '-'} (${s.status_ayah || '-'})`;
-            document.getElementById('profIbu').textContent = `${s.nama_ibu_kandung || '-'} (${s.status_ibu || '-'})`;
+            
+            document.getElementById('profAyah').textContent = s.nama_ayah_kandung ? `${s.nama_ayah_kandung} (${s.status_ayah || '-'})` : '-';
+            document.getElementById('profIbu').textContent = s.nama_ibu_kandung ? `${s.nama_ibu_kandung} (${s.status_ibu || '-'})` : '-';
             
             const btnWA = document.getElementById('btnHubungiWA');
             if(s.nomor_whatsapp) {
@@ -555,7 +545,7 @@
         }
 
         window.logoutApp = function() {
-            if(confirm("Keluar dari aplikasi?")) { localStorage.clear(); window.location.href = 'login.html'; }
+            if(confirm("Yakin ingin mengakhiri sesi pengajaran?")) { localStorage.clear(); window.location.href = 'login.html'; }
         };
     </script>
 </body>
